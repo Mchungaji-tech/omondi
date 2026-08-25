@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beacon Gospel Centre — Admin Console, Projects & Proposals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+ --paper:#F7F2E9;--paper2:#EFE6D6;--card:#FFFDF8;--ink:#191613;--ink2:#4A4238;--warmdark:#17120E;
+ --wine:#8C1D2F;--pine:#274D3D;--gold:#C99B3F;--gold2:#E3BE6E;--line:rgba(25,22,19,.18);
+ --disp:"Anton",sans-serif;--ser:"Newsreader",serif;--mono:"IBM Plex Mono",monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--paper);color:var(--ink);font-family:var(--ser);font-size:16px;line-height:1.6}
+img{display:block;max-width:100%}
+button{font-family:var(--mono);cursor:pointer}
+h1,h2,h3,h4{font-family:var(--disp);font-weight:400;text-transform:uppercase;line-height:.95;letter-spacing:.015em}
+.ser{font-family:var(--ser);font-style:italic;text-transform:none;font-weight:500;letter-spacing:0}
+::selection{background:var(--wine);color:var(--paper)}
+.mono{font-family:var(--mono)}
+.btn{display:inline-flex;align-items:center;gap:8px;background:var(--wine);color:var(--paper);border:1px solid var(--wine);font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;padding:12px 20px;border-radius:3px;transition:.25s}
+.btn:hover{background:var(--ink);border-color:var(--ink);transform:translateY(-1px)}
+.btn.gold{background:var(--gold);border-color:var(--gold);color:var(--warmdark)}
+.btn.gold:hover{background:var(--gold2);border-color:var(--gold2)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--ink)}
+.btn.ghost:hover{background:var(--ink);color:var(--paper)}
+.btn.sm{padding:8px 14px;font-size:10px}
+.btn.danger{background:transparent;border-color:var(--wine);color:var(--wine)}
+.btn.danger:hover{background:var(--wine);color:var(--paper)}
+.chip{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;padding:5px 10px;border-radius:99px;border:1px solid var(--line);color:var(--ink2)}
+.chip.wine{background:var(--wine);border-color:var(--wine);color:var(--paper)}
+.chip.pine{background:var(--pine);border-color:var(--pine);color:var(--paper)}
+.chip.gold{background:var(--gold);border-color:var(--gold);color:var(--warmdark)}
+
+/* ============ LOGIN ============ */
+.login{min-height:100vh;display:grid;grid-template-columns:1fr 1fr}
+.lleft{background:var(--warmdark);color:var(--paper);padding:60px 56px;display:flex;flex-direction:column;justify-content:space-between;position:relative;overflow:hidden}
+.lleft::after{content:"✝";position:absolute;right:-40px;bottom:-70px;font-size:22rem;color:rgba(227,190,110,.07)}
+.lleft .k{font-family:var(--mono);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold2)}
+.lleft h1{font-size:clamp(2.6rem,4.6vw,4.4rem);margin-top:18px}
+.lleft h1 .ser{color:var(--gold2)}
+.lleft ul{list-style:none;margin-top:34px;font-family:var(--mono);font-size:11px;line-height:2.4;letter-spacing:.08em;color:rgba(247,242,233,.75)}
+.lleft li::before{content:"✦ ";color:var(--gold2)}
+.lleft .verse{font-style:italic;color:rgba(247,242,233,.6);max-width:400px}
+.lright{display:flex;align-items:center;justify-content:center;padding:40px 24px}
+.lcard{width:min(460px,100%);background:var(--card);border:1px solid var(--line);border-top:5px solid var(--wine);border-radius:8px;padding:36px;box-shadow:0 24px 60px rgba(23,18,14,.15)}
+.lcard h2{font-size:1.6rem}
+.lcard .sub{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink2);margin:6px 0 24px}
+.field{margin-bottom:16px}
+.field label{display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--wine);margin-bottom:7px;font-weight:600}
+.field input,.field select,.field textarea{width:100%;background:#fff;border:1px solid var(--line);border-radius:4px;padding:12px 14px;font-family:var(--ser);font-size:.95rem;color:var(--ink)}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--wine);box-shadow:0 0 0 3px rgba(140,29,47,.14)}
+.field textarea{min-height:90px;resize:vertical}
+.steps{font-family:var(--mono);font-size:10px;letter-spacing:.14em;color:var(--ink2);display:flex;gap:8px;margin-bottom:20px;text-transform:uppercase}
+.steps b{color:var(--wine)}
+.tabs{display:flex;gap:8px;margin-bottom:18px}
+.tabs button{flex:1;padding:10px;font-size:10px;letter-spacing:.12em;text-transform:uppercase;border:1px solid var(--line);background:var(--paper);border-radius:4px;color:var(--ink2)}
+.tabs button.on{background:var(--ink);border-color:var(--ink);color:var(--gold2)}
+.qrbox{text-align:center;padding:10px 0}
+.qrbox canvas{margin:0 auto;border:6px solid #fff;box-shadow:0 10px 26px rgba(23,18,14,.2)}
+.qrbox p{font-family:var(--mono);font-size:10px;color:var(--ink2);margin-top:12px;letter-spacing:.06em}
+.authwidget{display:flex;align-items:center;gap:16px;background:var(--warmdark);color:var(--paper);border-radius:6px;padding:14px 18px;margin-bottom:16px}
+.authwidget .code{font-family:var(--mono);font-size:1.6rem;letter-spacing:.3em;color:var(--gold2);font-weight:600}
+.authwidget small{font-family:var(--mono);font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:rgba(247,242,233,.6);display:block}
+.authwidget .ring{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--gold2)}
+.hint{font-family:var(--mono);font-size:9.5px;color:var(--ink2);margin-top:12px;letter-spacing:.05em}
+
+/* ============ APP SHELL ============ */
+.shell{display:grid;grid-template-columns:250px 1fr;min-height:100vh}
+.side{background:var(--warmdark);color:var(--paper);padding:22px 0;position:sticky;top:0;height:100vh;overflow-y:auto;scrollbar-width:thin}
+.side .brand{padding:0 22px 20px;border-bottom:1px solid rgba(247,242,233,.12)}
+.side .brand b{font-family:var(--disp);font-size:1.15rem;letter-spacing:.04em;color:var(--gold2);display:block;text-transform:uppercase}
+.side .brand span{font-family:var(--mono);font-size:9px;letter-spacing:.24em;text-transform:uppercase;color:rgba(247,242,233,.55)}
+.side nav{padding:14px 12px}
+.side nav button{display:flex;width:100%;text-align:left;background:none;border:none;color:rgba(247,242,233,.72);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;padding:10px 12px;border-radius:4px;transition:.2s;gap:10px;align-items:center}
+.side nav button i{font-style:normal;color:var(--gold);width:20px}
+.side nav button:hover{background:rgba(247,242,233,.07);color:var(--paper)}
+.side nav button.on{background:var(--wine);color:var(--paper)}
+.side nav button.on i{color:var(--gold2)}
+.side .sec{margin:14px 22px 0;padding-top:14px;border-top:1px solid rgba(247,242,233,.12);font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:rgba(247,242,233,.5);line-height:1.9}
+.main{min-width:0}
+.topbar{position:sticky;top:0;z-index:40;background:rgba(247,242,233,.96);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px;padding:0 28px;height:58px}
+.topbar .vsw{display:flex;gap:4px}
+.topbar .vsw button{background:none;border:none;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink2);padding:8px 12px;border-bottom:2px solid transparent}
+.topbar .vsw button.on{color:var(--wine);border-bottom-color:var(--wine);font-weight:600}
+.topbar .right{margin-left:auto;display:flex;gap:10px;align-items:center}
+.userchip{font-family:var(--mono);font-size:10px;letter-spacing:.08em;border:1px solid var(--line);border-radius:99px;padding:7px 13px}
+.content{padding:34px 28px 80px;max-width:1240px}
+.phead{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:26px}
+.phead h2{font-size:clamp(1.8rem,3.4vw,2.6rem)}
+.phead h2 .ser{color:var(--wine)}
+.phead p{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--ink2);margin-top:6px}
+.cards4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:26px}
+.statcard{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--gold);border-radius:6px;padding:20px}
+.statcard b{font-family:var(--disp);font-size:2.2rem;color:var(--wine);display:block;line-height:1}
+.statcard small{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink2);display:block;margin-top:8px}
+.tblwrap{background:var(--card);border:1px solid var(--line);border-radius:8px;overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+th{font-family:var(--mono);font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink2);text-align:left;padding:14px 16px;border-bottom:2px solid var(--ink);background:var(--paper2)}
+td{padding:13px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(239,230,214,.5)}
+td .act{display:flex;gap:8px}
+.loglist{list-style:none;font-family:var(--mono);font-size:11px;line-height:2.2;color:var(--ink2)}
+.loglist b{color:var(--wine)}
+.bar{height:10px;background:var(--paper2);border:1px solid var(--line);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:99px}
+
+/* modal + toast */
+.modal{position:fixed;inset:0;z-index:90;background:rgba(23,18,14,.6);display:flex;align-items:center;justify-content:center;padding:20px}
+.mcard{background:var(--card);border-radius:10px;border-top:5px solid var(--wine);width:min(560px,100%);max-height:90vh;overflow-y:auto;padding:32px;box-shadow:0 40px 90px rgba(0,0,0,.4)}
+.mcard h3{font-size:1.4rem;margin-bottom:20px}
+.mrow2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.toast{position:fixed;bottom:26px;right:26px;z-index:99;background:var(--pine);color:var(--paper);font-family:var(--mono);font-size:11px;letter-spacing:.12em;padding:14px 20px;border-radius:6px;box-shadow:0 16px 40px rgba(0,0,0,.35);animation:tin .4s ease}
+@keyframes tin{from{transform:translateY(20px);opacity:0}to{transform:none;opacity:1}}
+
+/* projects page */
+.projgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.pcard{background:var(--card);border:1px solid var(--line);border-radius:8px;overflow:hidden;transition:transform .3s,box-shadow .3s;display:flex;flex-direction:column}
+.pcard:hover{transform:translateY(-5px);box-shadow:0 24px 50px rgba(23,18,14,.2)}
+.pcard .im{overflow:hidden;aspect-ratio:16/8}
+.pcard .im img{width:100%;height:100%;object-fit:cover;transition:transform 5s ease}
+.pcard:hover .im img{transform:scale(1.08)}
+.pcard .bd{padding:22px;display:flex;flex-direction:column;gap:12px;flex:1}
+.pcard h3{font-size:1.3rem}
+.pcard p{font-size:.92rem;color:var(--ink2);flex:1}
+.pcard .nums{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;letter-spacing:.1em;color:var(--ink2)}
+.pcard .nums b{color:var(--wine)}
+
+/* proposal doc */
+.propgrid{display:grid;grid-template-columns:300px 1fr;gap:26px;align-items:start}
+.propside{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:22px;position:sticky;top:80px}
+.propside h4{font-size:1rem;margin-bottom:14px}
+.propside button{display:block;width:100%;text-align:left;background:none;border:none;border-bottom:1px dashed var(--line);padding:11px 4px;font-family:var(--ser);font-size:.95rem;color:var(--ink2);transition:.2s}
+.propside button:hover{color:var(--wine);padding-left:10px}
+.propside button.on{color:var(--wine);font-weight:600}
+.pdoc{background:#fff;border:1px solid var(--line);border-radius:8px;padding:52px 56px;box-shadow:0 24px 60px rgba(23,18,14,.14)}
+.pdoc .dh{display:flex;justify-content:space-between;gap:14px;font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink2);border-bottom:3px double var(--ink);padding-bottom:14px;margin-bottom:26px;flex-wrap:wrap}
+.pdoc h2{font-size:clamp(1.7rem,3vw,2.5rem);margin-bottom:6px}
+.pdoc .meta{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;color:var(--wine);margin-bottom:24px;font-weight:600}
+.pdoc h4{font-size:1.05rem;margin:26px 0 10px;color:var(--wine)}
+.pdoc p,.pdoc li{font-size:.97rem;color:var(--ink2)}
+.pdoc ul{padding-left:20px}
+.bud{width:100%;border-collapse:collapse;margin-top:8px}
+.bud td,.bud th{border:1px solid var(--line);padding:10px 14px;font-size:.9rem}
+.bud th{background:var(--paper2);font-family:var(--mono);font-size:9px;letter-spacing:.18em;text-transform:uppercase}
+.bud tfoot td{background:var(--warmdark);color:var(--gold2);font-family:var(--mono);font-weight:600}
+.sigblock{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:50px}
+.sigblock div{border-top:1px solid var(--ink);padding-top:8px;font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink2)}
+.commitform{margin-top:26px;background:var(--paper2);border:1px solid var(--line);border-radius:8px;padding:28px}
+
+@media(max-width:1000px){
+ .login{grid-template-columns:1fr}
+ .shell{grid-template-columns:1fr}
+ .side{position:static;height:auto;display:flex;flex-wrap:wrap;align-items:center;padding:10px}
+ .side .brand{border:none;padding:0 14px}
+ .side nav{display:flex;flex-wrap:wrap;padding:8px}
+ .side .sec{display:none}
+ .cards4{grid-template-columns:1fr 1fr}
+ .projgrid,.propgrid{grid-template-columns:1fr}
+ .propside{position:static}
+ .pdoc{padding:30px 24px}
+ .mrow2{grid-template-columns:1fr}
+}
+@media print{
+ .side,.topbar,.no-print,.propside,.commitform{display:none!important}
+ .shell{grid-template-columns:1fr}
+ .pdoc{box-shadow:none;border:none}
+ body{background:#fff}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<!-- ================= LOGIN ================= -->
+<div id="view-login" class="login">
+  <div class="lleft">
+    <div>
+      <div class="k">Beacon Gospel Centre · Langas, Eldoret · Admin Console</div>
+      <h1>Shepherd's<br><span class="ser">Desk</span></h1>
+      <ul>
+        <li>Two-factor sign-in: password + authenticator app</li>
+        <li>QR enrolment &amp; QR push approval</li>
+        <li>Full content control — every section of the public site</li>
+        <li>Projects, proposals, prayer &amp; invitation inboxes</li>
+        <li>Audit log of every change</li>
+      </ul>
+    </div>
+    <p class="verse">“Let all things be done decently and in order.” — 1 Corinthians 14:40</p>
+  </div>
+  <div class="lright">
+    <div class="lcard">
+      <h2>Sign In</h2>
+      <div class="sub">Authorized office staff only</div>
+      <div class="steps"><span id="st1"><b>1</b> Credentials</span> → <span id="st2">2 Verification</span></div>
+
+      <div id="ls1">
+        <div class="field"><label>Email</label><input id="liEmail" type="email" value="office@revlangat.or.ke"></div>
+        <div class="field"><label>Password</label><input id="liPass" type="password" placeholder="••••••••••"></div>
+        <button class="btn" style="width:100%" id="liGo">Continue →</button>
+        <p class="hint">DEMO: any password works. In production this is verified server-side over HTTPS.</p>
+      </div>
+
+      <div id="ls2" hidden>
+        <div class="tabs">
+          <button id="tabTotp" class="on">Authenticator app</button>
+          <button id="tabQr">QR scan (phone)</button>
+        </div>
+        <div id="paneTotp">
+          <div class="authwidget">
+            <div><small>Demo authenticator<br>(use Google Authenticator / 1Password in production)</small>
+              <div class="code" id="authCode">——————</div></div>
+            <div class="ring" id="authRing">30s</div>
+          </div>
+          <div class="field"><label>6-digit code</label><input id="totpIn" inputmode="numeric" maxlength="6" placeholder="000000"></div>
+          <button class="btn" style="width:100%" id="totpGo">Verify &amp; Sign In ✦</button>
+          <p class="hint">SECRET (manual entry): <b>BGC2 K7RD ELDT 2026</b> — the QR on the other tab encodes this same secret as otpauth://</p>
+        </div>
+        <div id="paneQr" hidden>
+          <div class="qrbox">
+            <canvas id="qr" width="168" height="168"></canvas>
+            <p>Scan with your enrolled phone to approve this sign-in.<br>DEMO QR (illustrative) — waiting for approval…</p>
+          </div>
+          <button class="btn gold" style="width:100%" id="qrApprove"> Simulate phone approval</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= APP ================= -->
+<div id="view-app" class="shell" hidden>
+  <aside class="side">
+    <div class="brand"><b>✝ Beacon Admin</b><span>Shepherd's Desk · v2.6</span></div>
+    <nav id="sidenav"></nav>
+    <div class="sec" id="secNote"></div>
+  </aside>
+  <div class="main">
+    <div class="topbar no-print">
+      <div class="vsw">
+        <button data-view="dash" class="on">Dashboard</button>
+        <button data-view="projects">Projects</button>
+        <button data-view="proposal">Proposal</button>
+      </div>
+      <div class="right">
+        <a class="chip" href="index.html" target="_blank">Public site ↗</a>
+        <span class="userchip">office@revlangat.or.ke · <b style="color:var(--pine)">MFA ✓</b></span>
+        <button class="btn sm danger" id="logout">Log out</button>
+      </div>
+    </div>
+
+    <div class="content" id="page-dash"><div id="panel"></div></div>
+
+    <div class="content" id="page-projects" hidden>
+      <div class="phead"><div><h2>Kingdom <span class="ser">Projects</span></h2><p>Every project · audited · reported quarterly</p></div>
+        <div style="display:flex;gap:8px" id="projFilters">
+          <button class="chip wine" data-pf="all">All</button><button class="chip" data-pf="ongoing">Ongoing</button>
+          <button class="chip" data-pf="planning">Planning</button><button class="chip" data-pf="completed">Completed</button>
+        </div></div>
+      <div class="projgrid" id="projGrid"></div>
+    </div>
+
+    <div class="content" id="page-proposal" hidden>
+      <div class="phead no-print"><div><h2>Partnership <span class="ser">Proposal</span></h2><p>Select a project · commit support · print or send</p></div>
+        <button class="btn ghost sm" onclick="window.print()">🖨 Print / Save PDF</button></div>
+      <div class="propgrid">
+        <div class="propside no-print"><h4>Projects</h4><div id="propList"></div></div>
+        <div>
+          <div class="pdoc" id="propDoc"></div>
+          <div class="commitform no-print">
+            <h3 style="font-size:1.3rem;margin-bottom:6px">Commit Support / Submit a Proposal</h3>
+            <p class="ser" style="color:var(--ink2);font-style:italic;margin-bottom:18px">Partner with this project — the office responds within 5 working days.</p>
+            <form id="commitForm">
+              <div class="mrow2">
+                <div class="field"><label>Full name *</label><input id="cName" required></div>
+                <div class="field"><label>Organisation / Church</label><input id="cOrg"></div>
+              </div>
+              <div class="mrow2">
+                <div class="field"><label>Email / Phone *</label><input id="cContact" required></div>
+                <div class="field"><label>Commitment (KSh)</label><input id="cAmt" type="number" min="0" placeholder="e.g. 50000"></div>
+              </div>
+              <div class="field"><label>Method</label><select id="cMethod"><option>M-Pesa Paybill</option><option>Bank transfer</option><option>Cheque</option><option>In-kind / materials</option><option> Diaspora wire</option></select></div>
+              <div class="field"><label>Message</label><textarea id="cMsg"></textarea></div>
+              <button class="btn" type="submit" style="width:100%">Submit Commitment ✦</button>
+            </form>
+            <div id="commitDone" hidden style="text-align:center;padding:20px">
+              <h3 style="color:var(--wine);font-size:1.6rem">Asante Sana!</h3>
+              <p class="mono" style="font-size:11px;letter-spacing:.16em;color:var(--pine);margin:12px 0">REF: <span id="cRef"></span></p>
+              <p class="ser" style="color:var(--ink2);font-style:italic">The office will contact you with the partnership agreement. “God loves a cheerful giver.” — 2 Cor 9:7</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="modalRoot"></div>
+<div id="toastRoot"></div>
+
+<script>
+(function(){
+"use strict";
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const ksh=n=>"KSh "+Number(n||0).toLocaleString();
+const reduced=matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ============ SEED DATA (mirrors public site) ============ */
+const seed={
+ profile:{name:"Rev. Samuel K. Langat",epithet:"of Eldoret",tag:"Preacher of the Gospel · 23 Years in the Vineyard",
+  verse:"“Your word is a lamp to my feet and a light to my path.” — Psalm 119:105",
+  portrait:"https://picsum.photos/seed/eldoret-pastor-portrait/900/1125",
+  bio1:"Born in the tea hills of Kipkelion and saved at an open-air crusade in Nakuru, Rev. Samuel Langat has spent twenty-three years planting churches, training pastors and raising the young along the Rift Valley.",
+  bio2:"He preaches one thing only — Christ, and Him crucified — with an open Bible, a warm heart, and the conviction that no one is beyond the reach of grace.",
+  phone:"+254 712 000 000",email:"office@revlangat.or.ke",address:"Beacon Gospel Centre, Langas, Eldoret",box:"P.O. Box 1234-30100, Eldoret",
+  sun1:"6:30 AM — Dawn Service",sun2:"9:00 AM — Main Service · Live",sun3:"2:00 PM — New Believers' Class",
+  radio:"Voice of the Gospel 94.6 FM",paybill:"453 210",bank:"Equity Bank · Eldoret Branch",acct:"04501234567890",swift:"EQBLKENA"},
+ sermons:[
+  {title:"The God Who Runs to You",series:"Grace Without Borders",ref:"Luke 15:11–32",date:"Jul 26, 2026",dur:"48:12",cat:"grace"},
+  {title:"When Grace Becomes a Scandal",series:"Grace Without Borders",ref:"Luke 7:36–50",date:"Jul 12, 2026",dur:"45:40",cat:"grace"},
+  {title:"I Am the Bread: Feeding the 5,000",series:"Gospel of John — Light in the Dark",ref:"John 6:1–14",date:"Jun 28, 2026",dur:"51:05",cat:"john"},
+  {title:"Nicodemus in the Night",series:"Gospel of John — Light in the Dark",ref:"John 3:1–21",date:"Jun 21, 2026",dur:"47:33",cat:"john"},
+  {title:"Why Are You Cast Down, My Soul?",series:"Songs in the Night",ref:"Psalm 42",date:"Jun 07, 2026",dur:"43:58",cat:"psalms"},
+  {title:"A Table Before My Enemies",series:"Songs in the Night",ref:"Psalm 23",date:"May 24, 2026",dur:"46:20",cat:"psalms"},
+  {title:"As for Me and My House",series:"Family Altar",ref:"Joshua 24:15",date:"May 10, 2026",dur:"44:07",cat:"family"},
+  {title:"Lord, Teach Us to Pray",series:"Prayer That Moves",ref:"Luke 11:1–13",date:"Apr 26, 2026",dur:"49:26",cat:"prayer"}],
+ liveSched:[{day:"Sun",time:"9:00 AM",title:"Sunday Main Service"},{day:"Wed",time:"7:00 PM",title:"Midweek Bible Study"},{day:"Fri",time:"7:30 PM",title:"Youth Night Live"}],
+ live:{on:true,viewers:1243},
+ ministries:[
+  {name:"Youth Ministry",span:"Ages 13–30",desc:"Discipleship cells, football leagues, worship nights and career mentorship.",stat:"400+ youth · 18 cell groups · annual Soy Hills camp"},
+  {name:"Women's Fellowship",span:"Mothers' Union",desc:"Prayer bands, table-banking savings groups and mentorship for mothers.",stat:"26 savings groups · 340 women"},
+  {name:"Children's Church",span:"Ages 3–12",desc:"Sunday school in three languages, memory-verse clubs and the Huruma feeding programme.",stat:"500+ children · 300 meals weekly"},
+  {name:"Street Rescue Outreach",span:"Rescue & Rehab",desc:"Rescue, rehabilitation and reconciliation for street-connected young people.",stat:"210 youth resettled since 2018"},
+  {name:"Beacon Leadership School",span:"Pastoral Training",desc:"Two-year evening school equipping bi-vocational pastors across the North Rift.",stat:"60 pastors trained yearly"}],
+ week:[
+  {day:"Mon",title:"Sabbath Rest & Family Day",detail:"School run, tea with Ruth, reading — no meetings booked.",time:"Family Time"},
+  {day:"Tue",title:"Prayer Mountain — Kaptagat Ridge",detail:"Corporate intercession for the church, the town and the nation.",time:"5:30 – 7:00 AM"},
+  {day:"Wed",title:"Midweek Bible Study + Radio",detail:"Exposition in the main hall, then the 6:00 PM recording of “Morning with God”.",time:"6:00 PM · FM 94.6"},
+  {day:"Thu",title:"Counselling & Hospital Visits",detail:"Pastoral counselling by appointment; afternoons at MTRH Eldoret.",time:"9 AM – 4 PM"},
+  {day:"Fri",title:"Youth Night — Worship & Word",detail:"Youth worship evening, followed by football tactics.",time:"7:00 – 9:30 PM"},
+  {day:"Sat",title:"Sermon Study & Weddings",detail:"Morning locked in sermon preparation; afternoons officiating weddings.",time:"Study · 8 AM – 12"},
+  {day:"Sun",title:"The Lord's Day — Three Services",detail:"Dawn service · main service (live-streamed) · new-believers' class.",time:"6:30 · 9:00 · 2:00"}],
+ gallery:[
+  {img:"https://picsum.photos/seed/open-air-crusade-eldoret/620/460",caption:"Glory Crusade, Eldoret Showgrounds — 12,000 gathered · 2025"},
+  {img:"https://picsum.photos/seed/soy-hills-worship/620/460",caption:"Youth camp worship night, Soy Hills · Aug 2025"},
+  {img:"https://picsum.photos/seed/river-baptism-kenya/620/460",caption:"84 baptisms at the Kipkaren river · 2024"},
+  {img:"https://picsum.photos/seed/gospel-choir-worship/620/460",caption:"Beacon Mass Choir, Sunday 9AM service"},
+  {img:"https://picsum.photos/seed/huruma-feeding-program/620/460",caption:"Children's feeding programme, Huruma — every Saturday"}],
+ testimonies:[
+  {quote:"Our pastor does not love church politics; he loves the people of the church. He prayed for me in hospital, visited me at home, and taught me the Word until I stood firm.",who:"Mama Grace W. · Church Mother since 2009"},
+  {quote:"I was on the streets of Eldoret for three years. The Street Rescue team found me, cleaned me up, and paid my school fees. Today I am in Form Four and a worship leader.",who:"Brian O., 18 · Beacon Youth"},
+  {quote:"Every year I invite Rev. Langat to preach our revival week in Kitale. He comes with his own bus fare, a worn-out Bible, and fire from heaven.",who:"Rev. David Mutai · Partner Pastor, Kitale"},
+  {quote:"His radio programme lifted my husband out of despair. We now serve together in the men's fellowship.",who:"Sr. Naomi K. · Radio Listener, Iten"}],
+ events:[
+  {day:"16",mon:"Aug 2026",title:"Glory Open-Air Crusade",loc:"Eldoret Showgrounds · 2:00 PM · Free entry",desc:"One-day town crusade with worship, the Word and prayer for the sick."},
+  {day:"03",mon:"Sep 2026",title:"Youth Summer Camp — “Born of Fire”",loc:"Soy Hills Campsite · Sep 3–6 · Ages 13–19",desc:"Four days of worship, teaching, football and riverside baptisms."},
+  {day:"04",mon:"Oct 2026",title:"Widows & Orphans — Fundraiser Sunday",loc:"Beacon Gospel Centre, Langas · 9:00 AM",desc:"School fees and roofing for 120 widows' households across Uasin Gishu."},
+  {day:"22",mon:"Nov 2026",title:"Harvest Thanksgiving & Praise Concert",loc:"Langas Main Auditorium · 2:00 PM",desc:"A night of gratitude with the Mass Choir and guest ministers."}],
+ funds:[
+  {name:"New 2,000-Seat Auditorium",raised:8200000,goal:12000000,note:"Phase 2: roofing & pews"},
+  {name:"Youth Camp Sponsorship 2026",raised:315000,goal:750000,note:"600 campers at Soy Hills"},
+  {name:"Widows & Orphans Fund",raised:550000,goal:1000000,note:"120 homes · fees & roofing"}],
+ programs:[
+  {name:"Auditorium Building Fund",code:"BUILD",desc:"Phase 2 of the 2,000-seat hall: roofing sheets, pews and sound.",goal:"KSh 12M"},
+  {name:"Youth Camp Sponsorship",code:"CAMP",desc:"KSh 5,000 fully sponsors one camper for four days at Soy Hills.",goal:"KSh 750K"},
+  {name:"Widows & Orphans Fund",code:"WIDOWS",desc:"School fees, food parcels and roofing sheets for 120 households.",goal:"KSh 1M"},
+  {name:"School Fees Bursary",code:"SCHOOL",desc:"KSh 8,000 covers one term for one vulnerable secondary student.",goal:"KSh 8,000 / term"},
+  {name:"Children's Feeding Programme",code:"MEALS",desc:"KSh 1,500 feeds a child in Huruma for a whole month.",goal:"KSh 1,500 / child / mo"},
+  {name:"Pastor Training Scholarship",code:"TRAIN",desc:"KSh 12,000 trains one bi-vocational pastor for a full year.",goal:"KSh 12,000 / yr"},
+  {name:"Church Planting Fund",code:"PLANT",desc:"KSh 150K launches one new congregation: tent, sound, starter stipend.",goal:"KSh 150K / plant"},
+  {name:"Ministry Vehicle Appeal",code:"WHEELS",desc:"A 14-seater for hospital visits, camp transport and crusade logistics.",goal:"KSh 2.5M"}],
+ projects:[
+  {name:"Auditorium Phase 2 — Roofing & Pews",status:"ongoing",raised:8200000,goal:12000000,img:"https://picsum.photos/seed/auditorium-construction/800/400",
+   summary:"Complete the 2,000-seat sanctuary on the Langas hill so crusade crowds no longer stand in the rain.",
+   budget:"Roofing sheets & trusses|4500000\nPews (600 seats)|3800000\nSound & acoustics|2200000\nElectrical & lighting|1500000"},
+  {name:"Youth Camp 2026 — “Born of Fire”",status:"ongoing",raised:315000,goal:750000,img:"https://picsum.photos/seed/youth-camp-kenya/800/400",
+   summary:"Four days of worship, teaching and riverside baptisms for 600 teenagers at Soy Hills this August.",
+   budget:"Meals (600 campers)|300000\nTents & venue|180000\nMaterials & Bibles|150000\nTransport subsidy|120000"},
+  {name:"Widows & Orphans — 120 Homes",status:"ongoing",raised:550000,goal:1000000,img:"https://picsum.photos/seed/widows-support-kenya/800/400",
+   summary:"School fees, monthly food parcels and roofing sheets for the most vulnerable households in Uasin Gishu.",
+   budget:"School fees (85 children)|450000\nFood parcels (12 months)|350000\nRoofing sheets (40 homes)|200000"},
+  {name:"Huruma Borehole & Sanitation",status:"planning",raised:120000,goal:900000,img:"https://picsum.photos/seed/borehole-water-kenya/800/400",
+   summary:"Clean water and sanitation blocks for the children's feeding centre and 60 neighbouring homes.",
+   budget:"Borehole drilling|500000\nWater tank & plumbing|220000\nSanitation blocks|180000"},
+  {name:"Bursary Endowment Fund",status:"ongoing",raised:2100000,goal:5000000,img:"https://picsum.photos/seed/school-bursary-kenya/800/400",
+   summary:"A permanent endowment whose interest pays secondary school fees for vulnerable students forever.",
+   budget:"Endowment principal|5000000"},
+  {name:"Ministry Vehicle — 14 Seater",status:"ongoing",raised:1150000,goal:2500000,img:"https://picsum.photos/seed/ministry-van-kenya/800/400",
+   summary:"Hospital visits at MTRH, camp transport and crusade logistics across the North Rift — the gospel on wheels.",
+   budget:"Vehicle purchase|2200000\nInsurance & branding|300000"},
+  {name:"Radio & Media Upgrade",status:"completed",raised:1800000,goal:1800000,img:"https://picsum.photos/seed/radio-studio-kenya/800/400",
+   summary:"New studio, cameras and streaming rig — completed May 2026. Sunday services now reach 120k listeners.",
+   budget:"Studio refit|900000\nCameras & switcher|600000\nStreaming rig|300000"}],
+ prayer:[
+  {name:"Mary C.",cat:"healing",text:"Please pray for my mother recovering from surgery at MTRH.",anon:false,status:"new",when:"Aug 6"},
+  {name:"",cat:"salvation",text:"My brother has drifted far from the Lord. I believe for his return.",anon:true,status:"new",when:"Aug 5"},
+  {name:"Peter K.",cat:"finances",text:"I lost my job in June. Pray for provision and the right opening.",anon:false,status:"prayed",when:"Aug 3"},
+  {name:"Sr. Anne",cat:"family",text:"Marriage under heavy strain — pray for soft hearts and wisdom.",anon:false,status:"prayed",when:"Jul 30"}],
+ invites:[
+  {name:"Rev. John Kamau",church:"ACK St. Luke's, Kitale",type:"revival",date:"Sep 12–14",status:"new"},
+  {name:"Elder M. Soi",church:"PCEA Zion, Turbo",type:"concert",date:"Nov 22",status:"confirmed"},
+  {name:"Pastor A. Cherono",church:"Fountain of Hope, Kapsabet",type:"crusade",date:"Oct 3",status:"new"}],
+ log:[], security:{mfa:true,method:"Authenticator (TOTP) + QR enrolment",lockout:true,audit:true}
+};
+let state;
+try{state=JSON.parse(localStorage.getItem("bgc-admin"))||structuredClone(seed);}catch(e){state=structuredClone(seed);}
+const save=(msg)=>{localStorage.setItem("bgc-admin",JSON.stringify(state));if(msg){state.log.unshift({t:new Date().toLocaleString("en-KE"),msg});state.log=state.log.slice(0,40);localStorage.setItem("bgc-admin",JSON.stringify(state));}toast(msg||"Saved ✓");};
+function toast(msg){const t=document.createElement("div");t.className="toast";t.textContent=msg;$("#toastRoot").appendChild(t);setTimeout(()=>t.remove(),2600);}
+
+/* ============ AUTH (TOTP + QR demo) ============ */
+const SECRET="BGC2K7RDELD2026";
+function totp(win){let h=7;const s=SECRET+":"+win;for(const c of s)h=(h*31+c.charCodeAt(0))>>>0;return String(h%1000000).padStart(6,"0");}
+const curWin=()=>Math.floor(Date.now()/30000);
+setInterval(()=>{
+ const w=curWin();$("#authCode").textContent=totp(w);
+ $("#authRing").textContent=(30-Math.floor(Date.now()/1000)%30)+"s";
+},500);
+$("#liGo").onclick=()=>{
+ if(!$("#liPass").value){toast("Enter your password");return;}
+ $("#ls1").hidden=true;$("#ls2").hidden=false;
+ $("#st1").innerHTML="1 Credentials ✓";$("#st2").innerHTML="<b>2</b> Verification";
+ drawQR();
+};
+$("#tabTotp").onclick=()=>{$("#tabTotp").classList.add("on");$("#tabQr").classList.remove("on");$("#paneTotp").hidden=false;$("#paneQr").hidden=true;};
+$("#tabQr").onclick=()=>{$("#tabQr").classList.add("on");$("#tabTotp").classList.remove("on");$("#paneQr").hidden=false;$("#paneTotp").hidden=true;};
+$("#totpGo").onclick=()=>{
+ const v=$("#totpIn").value.trim(),w=curWin();
+ if(v===totp(w)||v===totp(w-1))enter();else toast("Invalid code — check the authenticator");
+};
+$("#qrApprove").onclick=enter;
+function drawQR(){ /* illustrative QR matrix */
+ const c=$("#qr"),x=c.getContext("2d"),n=21,m=8;x.fillStyle="#fff";x.fillRect(0,0,168,168);x.fillStyle="#17120E";
+ let s=13;const rnd=()=> (s=(s*16807)%2147483647)/2147483647;
+ const finder=(fx,fy)=>{for(let i=0;i<7;i++)for(let j=0;j<7;j++){const on=(i===0||i===6||j===0||j===6||(i>1&&i<5&&j>1&&j<5));if(on)x.fillRect((fx+j)*m,(fy+i)*m,m,m);}};
+ for(let i=0;i<n;i++)for(let j=0;j<n;j++){const inF=(i<8&&j<8)||(i<8&&j>n-9)||(i>n-9&&j<8);if(!inF&&rnd()>.52)x.fillRect(j*m,i*m,m,m);}
+ finder(0,0);finder(n-7,0);finder(0,n-7);
+}
+function enter(){
+ $("#view-login").hidden=true;$("#view-app").hidden=false;
+ state.log.unshift({t:new Date().toLocaleString("en-KE"),msg:"Admin signed in with MFA (TOTP)"});
+ localStorage.setItem("bgc-admin",JSON.stringify(state));
+ buildNav();renderPanel("overview");
+}
+$("#logout").onclick=()=>{location.reload();};
+
+/* ============ DASHBOARD ============ */
+const PANELS=[
+ ["overview","◈","Overview"],["profile","✎","Profile & Hero"],["sermons","📖","Sermons"],["live","📡","Live Streams"],
+ ["ministries","🕊","Ministries"],["week","🗓","Weekly Schedule"],["gallery","🖼","Gallery"],["testimonies","❝","Testimonies"],
+ ["events","★","Events"],["programs","✦","Programs & Funds"],["giving","₣","Giving Details"],["prayer","🙏","Prayer Inbox"],
+ ["invites","✉","Invitations"],["projects","⚒","Projects"],["security","🔐","Security"]
+];
+let curPanel="overview";
+function buildNav(){
+ $("#sidenav").innerHTML=PANELS.map(p=>`<button data-p="${p[0]}" class="${p[0]===curPanel?"on":""}"><i>${p[1]}</i>${p[2]}</button>`).join("");
+ $("#sidenav").querySelectorAll("button").forEach(b=>b.onclick=()=>{curPanel=b.dataset.p;buildNav();renderPanel(curPanel);});
+ const s=state.security;
+ $("#secNote").innerHTML=`MFA: ${s.mfa?"ENFORCED":"OFF"}<br>Method: ${s.method}<br>Lockout: ${s.lockout?"ON":"OFF"} · Audit: ${s.audit?"ON":"OFF"}`;
+}
+const SCHEMAS={
+ sermons:{title:"Sermons",fields:[["title","Title"],["series","Series"],["ref","Scripture"],["date","Date"],["dur","Duration"],["cat","Category","select",["grace","john","psalms","family","prayer"]]]},
+ liveSched:{title:"Live schedule",fields:[["day","Day","select",["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]],["time","Time"],["title","Stream title"]]},
+ ministries:{title:"Ministries",fields:[["name","Name"],["span","Age group / tag"],["desc","Description","textarea"],["stat","Key stats"]]},
+ week:{title:"Weekly schedule",fields:[["day","Day","select",["Mon","Tue","Wed","Thu","Fri","Sat","Sun"]],["title","Activity"],["detail","Detail","textarea"],["time","Time chip"]]},
+ gallery:{title:"Gallery",fields:[["img","Image URL"],["caption","Caption"]]},
+ testimonies:{title:"Testimonies",fields:[["quote","Quote","textarea"],["who","Attribution"]]},
+ events:{title:"Events",fields:[["day","Day (num)"],["mon","Month label"],["title","Title"],["loc","Location line"],["desc","Description","textarea"]]},
+ programs:{title:"Support programmes",fields:[["name","Programme"],["code","M-Pesa account code"],["desc","Description","textarea"],["goal","Goal label"]]},
+ funds:{title:"Fund progress",fields:[["name","Fund"],["raised","Raised (KSh)","number"],["goal","Goal (KSh)","number"],["note","Note"]]},
+ projects:{title:"Projects",fields:[["name","Project name"],["status","Status","select",["ongoing","planning","completed"]],["raised","Raised (KSh)","number"],["goal","Goal (KSh)","number"],["img","Image URL"],["summary","Summary","textarea"],["budget","Budget lines (item|cost, one per line)","textarea"]]}
+};
+function renderPanel(key){
+ const P=$("#panel");
+ if(key==="overview"){
+  const np=state.prayer.filter(p=>p.status==="new").length, ni=state.invites.filter(i=>i.status==="new").length;
+  P.innerHTML=`<div class="phead"><div><h2>Overview <span class="ser">— karibu, admin</span></h2><p>Everything on the public site, at a glance</p></div>
+   <button class="btn sm" id="goLiveBtn">${state.live.on?"● LIVE now — end stream":"○ Start live stream"}</button></div>
+   <div class="cards4">
+    <div class="statcard"><b>${state.sermons.length}</b><small>Sermons in library</small></div>
+    <div class="statcard"><b>${np}</b><small>New prayer requests</small></div>
+    <div class="statcard"><b>${ni}</b><small>New invitations</small></div>
+    <div class="statcard"><b>${state.live.viewers.toLocaleString()}</b><small>Live viewers (base)</small></div>
+   </div>
+   <div class="cards4" style="grid-template-columns:1fr 1fr">
+    <div class="tblwrap" style="padding:20px"><h4 style="margin-bottom:12px">Recent activity</h4>
+     <ul class="loglist">${state.log.slice(0,9).map(l=>`<li><b>${esc(l.t)}</b> — ${esc(l.msg)}</li>`).join("")||"<li>No activity yet.</li>"}</ul></div>
+    <div class="tblwrap" style="padding:20px"><h4 style="margin-bottom:12px">Fund progress</h4>
+     ${state.funds.map(f=>{const p=Math.min(100,Math.round(f.raised/f.goal*100));return `<div style="margin-bottom:14px"><div style="display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;margin-bottom:5px"><span>${esc(f.name)}</span><b>${p}%</b></div><div class="bar"><i style="width:${p}%"></i></div></div>`;}).join("")}</div>
+   </div>`;
+  $("#goLiveBtn").onclick=()=>{state.live.on=!state.live.on;save(state.live.on?"Stream set to LIVE":"Stream ended");renderPanel("overview");};
+  return;
+ }
+ if(key==="profile"){
+  const f=state.profile;
+  const fld=(k,l,t)=>`<div class="field"><label>${l}</label>${t==="ta"?`<textarea data-k="${k}">${esc(f[k])}</textarea>`:`<input data-k="${k}" value="${esc(f[k])}">`}</div>`;
+  P.innerHTML=`<div class="phead"><div><h2>Profile <span class="ser">& Hero</span></h2><p>Controls the masthead, about band and footer contact</p></div><button class="btn" id="pSave">Save changes ✦</button></div>
+  <div class="tblwrap" style="padding:26px"><div class="mrow2">
+   ${fld("name","Full name")}${fld("epithet","Epithet (e.g. of Eldoret)")}
+   ${fld("tag","Tagline")}${fld("verse","Hero scripture")}
+   ${fld("portrait","Portrait image URL")}${fld("radio","Radio station")}
+   ${fld("bio1","Bio — paragraph 1","ta")}${fld("bio2","Bio — paragraph 2","ta")}
+   ${fld("sun1","Sunday line 1")}${fld("sun2","Sunday line 2")}
+   ${fld("sun3","Sunday line 3")}${fld("phone","Phone / WhatsApp")}
+   ${fld("email","Email")}${fld("address","Church address")}
+   ${fld("box","Postal address")}</div></div>`;
+  $("#pSave").onclick=()=>{P.querySelectorAll("[data-k]").forEach(el=>f[el.dataset.k]=el.value);save("Profile updated");};
+  return;
+ }
+ if(key==="giving"){
+  const f=state.profile;
+  P.innerHTML=`<div class="phead"><div><h2>Giving <span class="ser">Details</span></h2><p>M-Pesa, bank & SWIFT shown on the public site</p></div><button class="btn" id="gSave">Save ✦</button></div>
+  <div class="tblwrap" style="padding:26px"><div class="mrow2">
+   ${["paybill","M-Pesa Paybill","acct","Account number","bank","Bank & branch","swift","SWIFT code"].reduce((a,l,i,arr)=>{ if(i%2)return a; return a+`<div class="field"><label>${arr[i+1]}</label><input data-g="${arr[i]}" value="${esc(f[arr[i]])}"></div>`;},"")}
+  </div></div>`;
+  $("#gSave").onclick=()=>{P.querySelectorAll("[data-g]").forEach(el=>f[el.dataset.g]=el.value);save("Giving details updated");};
+  return;
+ }
+ if(key==="prayer"){
+  P.innerHTML=`<div class="phead"><div><h2>Prayer <span class="ser">Inbox</span></h2><p>Confidential — intercession team only</p></div></div>
+  <div class="tblwrap"><table><tr><th>From</th><th>Category</th><th>Request</th><th>Status</th><th></th></tr>
+  ${state.prayer.map((r,i)=>`<tr><td>${r.anon?"<i>Anonymous</i>":esc(r.name)}<br><span class="chip">${r.when}</span></td><td><span class="chip wine">${r.cat}</span></td><td style="max-width:340px">${esc(r.text)}</td>
+  <td><span class="chip ${r.status==="new"?"gold":"pine"}">${r.status}</span></td>
+  <td><div class="act">${r.status==="new"?`<button class="btn sm" data-pr="${i}">Mark prayed 🙏</button>`:""}<button class="btn sm danger" data-pd="${i}">Archive</button></div></td></tr>`).join("")}</table></div>`;
+  P.querySelectorAll("[data-pr]").forEach(b=>b.onclick=()=>{state.prayer[+b.dataset.pr].status="prayed";save("Request marked as prayed");renderPanel("prayer");});
+  P.querySelectorAll("[data-pd]").forEach(b=>b.onclick=()=>{state.prayer.splice(+b.dataset.pd,1);save("Request archived");renderPanel("prayer");});
+  return;
+ }
+ if(key==="invites"){
+  P.innerHTML=`<div class="phead"><div><h2>Invitation <span class="ser">Inbox</span></h2><p>Requests for the pastor to minister</p></div></div>
+  <div class="tblwrap"><table><tr><th>From</th><th>Type</th><th>Date</th><th>Status</th><th></th></tr>
+  ${state.invites.map((r,i)=>`<tr><td><b>${esc(r.name)}</b><br>${esc(r.church)}</td><td><span class="chip">${r.type}</span></td><td class="mono" style="font-size:11px">${esc(r.date)}</td>
+  <td><span class="chip ${r.status==="new"?"gold":r.status==="confirmed"?"pine":""}">${r.status}</span></td>
+  <td><div class="act"><button class="btn sm" data-ic="${i}">Confirm</button><button class="btn sm danger" data-id="${i}">Decline</button></div></td></tr>`).join("")}</table></div>`;
+  P.querySelectorAll("[data-ic]").forEach(b=>b.onclick=()=>{state.invites[+b.dataset.ic].status="confirmed";save("Invitation confirmed");renderPanel("invites");});
+  P.querySelectorAll("[data-id]").forEach(b=>b.onclick=()=>{state.invites.splice(+b.dataset.id,1);save("Invitation declined & removed");renderPanel("invites");});
+  return;
+ }
+ if(key==="security"){
+  const s=state.security;
+  P.innerHTML=`<div class="phead"><div><h2>Security <span class="ser">Centre</span></h2><p>Sign-in protection for this console</p></div></div>
+  <div class="cards4" style="grid-template-columns:1fr 1fr">
+   <div class="tblwrap" style="padding:24px">
+    <h4 style="margin-bottom:16px">Multi-factor authentication</h4>
+    <p class="ser" style="color:var(--ink2);font-style:italic;margin-bottom:16px">Password + authenticator app (TOTP), enrolled by QR. In production add FIDO2 passkeys for phishing resistance.</p>
+    <div class="field"><label>MFA enforcement</label><select id="secMfa"><option ${s.mfa?"selected":""}>ON</option><option ${!s.mfa?"selected":""}>OFF</option></select></div>
+    <div class="field"><label>Brute-force lockout (5 attempts)</label><select id="secLock"><option ${s.lockout?"selected":""}>ON</option><option ${!s.lockout?"selected":""}>OFF</option></select></div>
+    <div class="field"><label>Audit logging</label><select id="secAud"><option ${s.audit?"selected":""}>ON</option><option ${!s.aud?"selected":""}>OFF</option></select></div>
+    <button class="btn" id="secSave">Save security policy ✦</button>
+   </div>
+   <div class="tblwrap" style="padding:24px">
+    <h4 style="margin-bottom:16px">Trusted devices & sessions</h4>
+    <ul class="loglist">
+     <li><b>iPhone 13 · Eldoret</b> — this device · MFA ✓</li>
+     <li><b>Office PC · Langas</b> — last seen Aug 6, 5:12 PM</li>
+     <li><b>Chrome · Nairobi</b> — blocked (wrong password ×5) Aug 4</li>
+    </ul>
+    <button class="btn sm danger" style="margin-top:14px" id="revoke">Revoke all other sessions</button>
+   </div></div>`;
+  $("#secSave").onclick=()=>{s.mfa=$("#secMfa").value==="ON";s.lockout=$("#secLock").value==="ON";s.audit=$("#secAud").value==="ON";save("Security policy updated");buildNav();};
+  $("#revoke").onclick=()=>save("All other sessions revoked");
+  return;
+ }
+ /* generic CRUD */
+ const sch=SCHEMAS[key]; if(!sch)return;
+ const rows=state[key];
+ P.innerHTML=`<div class="phead"><div><h2>${sch.title} <span class="ser">manager</span></h2><p>${rows.length} records · edits publish to the public site</p></div>
+  <button class="btn" id="addBtn">+ Add new</button></div>
+  <div class="tblwrap"><table><tr>${sch.fields.slice(0,4).map(f=>`<th>${f[1]}</th>`).join("")}<th></th></tr>
+  ${rows.map((r,i)=>`<tr>${sch.fields.slice(0,4).map(f=>`<td>${f[2]==="number"?Number(r[f[0]]).toLocaleString():esc(String(r[f[0]]).slice(0,90))}</td>`).join("")}
+  <td><div class="act"><button class="btn sm" data-e="${i}">Edit</button><button class="btn sm danger" data-d="${i}">Delete</button></div></td></tr>`).join("")}</table></div>`;
+ $("#addBtn").onclick=()=>openModal(key,null);
+ P.querySelectorAll("[data-e]").forEach(b=>b.onclick=()=>openModal(key,+b.dataset.e));
+ P.querySelectorAll("[data-d]").forEach(b=>b.onclick=()=>{if(confirm("Delete this record?")){rows.splice(+b.dataset.d,1);save(sch.title+" record deleted");renderPanel(key);}});
+}
+function openModal(key,idx){
+ const sch=SCHEMAS[key],obj=idx==null?{}:state[key][idx];
+ $("#modalRoot").innerHTML=`<div class="modal"><div class="mcard"><h3>${idx==null?"Add":"Edit"} — ${sch.title}</h3>
+  <form id="mForm">${sch.fields.map((f,i)=>`<div class="${f[2]==="textarea"?"field":(i%2===0?"field":"field")}"><label>${f[1]}</label>
+   ${f[2]==="textarea"?`<textarea name="${f[0]}">${esc(obj[f[0]])}</textarea>`:
+     f[2]==="select"?`<select name="${f[0]}">${f[3].map(o=>`<option ${obj[f[0]]===o?"selected":""}>${o}</option>`).join("")}</select>`:
+     `<input name="${f[0]}" type="${f[2]==="number"?"number":"text"}" value="${esc(obj[f[0]])}">`}</div>`).join("")}
+   <div style="display:flex;gap:10px;margin-top:8px"><button class="btn" type="submit" style="flex:1">Save ✦</button>
+   <button class="btn ghost" type="button" id="mCancel">Cancel</button></div></form></div></div>`;
+ $("#mCancel").onclick=()=>$("#modalRoot").innerHTML="";
+ $("#mForm").onsubmit=e=>{
+  e.preventDefault();const rec={};
+  new FormData(e.target).forEach((v,k)=>rec[k]= SCHEMAS[key].fields.find(f=>f[0]===k)?.[2]==="number"?+v:v);
+  if(idx==null)state[key].unshift(rec);else state[key][idx]=rec;
+  $("#modalRoot").innerHTML="";save(sch.title+" saved");renderPanel(key);
+ };
+}
+
+/* ============ VIEWS ============ */
+$$(".vsw button").forEach(b=>b.onclick=()=>{
+ $$(".vsw button").forEach(x=>x.classList.remove("on"));b.classList.add("on");
+ ["dash","projects","proposal"].forEach(v=>$("#page-"+v).hidden=v!==b.dataset.view);
+ if(b.dataset.view==="projects")renderProjects();
+ if(b.dataset.view==="proposal")renderProposal();
+});
+
+/* projects page */
+let pf="all";
+function renderProjects(){
+ $("#projFilters").querySelectorAll("button").forEach(b=>{b.onclick=()=>{pf=b.dataset.pf;renderProjects();};b.className="chip"+(pf===b.dataset.pf?" wine":"");});
+ const list=state.projects.filter(p=>pf==="all"||p.status===pf);
+ $("#projGrid").innerHTML=list.map(p=>{const pct=Math.min(100,Math.round(p.raised/p.goal*100));
+  return `<div class="pcard"><div class="im"><img src="${esc(p.img)}" alt=""></div><div class="bd">
+   <div><span class="chip ${p.status==="ongoing"?"wine":p.status==="completed"?"pine":"gold"}">${p.status}</span></div>
+   <h3>${esc(p.name)}</h3><p>${esc(p.summary)}</p>
+   <div class="bar"><i style="width:${pct}%"></i></div>
+   <div class="nums"><span>Raised <b>${ksh(p.raised)}</b></span><span>Goal ${ksh(p.goal)} · ${pct}%</span></div>
+   <button class="btn sm gold" data-prop="${esc(p.name)}">View proposal →</button></div></div>`;}).join("")||"<p class='ser'>No projects in this filter.</p>";
+ $("#projGrid").querySelectorAll("[data-prop]").forEach(b=>b.onclick=()=>{
+  selProj=b.dataset.prop;$$(".vsw button").forEach(x=>x.classList.toggle("on",x.dataset.view==="proposal"));
+  ["dash","projects","proposal"].forEach(v=>$("#page-"+v).hidden=v!=="proposal");renderProposal();
+ });
+}
+/* proposal page */
+let selProj=state.projects[0].name;
+function renderProposal(){
+ $("#propList").innerHTML=state.projects.map(p=>`<button class="${p.name===selProj?"on":""}" data-sel="${esc(p.name)}">${esc(p.name)}</button>`).join("");
+ $("#propList").querySelectorAll("button").forEach(b=>b.onclick=()=>{selProj=b.dataset.sel;renderProposal();});
+ const p=state.projects.find(x=>x.name===selProj)||state.projects[0];
+ const rows=p.budget.split("\n").map(l=>l.split("|")).filter(r=>r[0]);
+ const total=rows.reduce((a,r)=>a+(+r[1]||0),0);
+ $("#propDoc").innerHTML=`
+  <div class="dh"><span>Beacon Gospel Centre · Langas, Eldoret</span><span>Ref BGC/PROP/2026/${String(state.projects.indexOf(p)+11).padStart(2,"0")}</span><span>07 Aug 2026</span></div>
+  <h2>${esc(p.name)}</h2>
+  <div class="meta">PARTNERSHIP PROPOSAL · STATUS: ${p.status.toUpperCase()} · RAISED ${ksh(p.raised)} OF ${ksh(p.goal)}</div>
+  <h4>1 · Executive summary</h4><p>${esc(p.summary)} This proposal invites partners — individuals, churches, businesses and the diaspora — to co-labour with Beacon Gospel Centre in completing this work, with full quarterly reporting and an annual independent audit.</p>
+  <h4>2 · Objectives</h4><ul><li>Complete the scope described above within 12 months of full funding.</li><li>Serve the most vulnerable first, vetted by the elders' committee.</li><li>Report to every partner quarterly — photos, receipts and audited figures.</li><li>Glory to God alone: every plaque reads “Soli Deo Gloria”, no donor branding required.</li></ul>
+  <h4>3 · Budget breakdown</h4>
+  <table class="bud"><tr><th>Line item</th><th style="text-align:right">Cost (KSh)</th></tr>
+  ${rows.map(r=>`<tr><td>${esc(r[0])}</td><td style="text-align:right">${Number(r[1]).toLocaleString()}</td></tr>`).join("")}
+  <tfoot><tr><td>TOTAL</td><td style="text-align:right">${total.toLocaleString()}</td></tr></table>
+  <h4>4 · Timeline</h4><ul><li>Month 1–2 · Mobilisation, procurement & partner onboarding</li><li>Month 3–9 · Execution with monthly site/field reports</li><li>Month 10–11 · Inspection & commissioning</li><li>Month 12 · Dedication service & final audited report</li></ul>
+  <h4>5 · Accountability</h4><p>Funds are received only through the church's audited accounts (M-Pesa Paybill ${esc(state.profile.paybill)} · ${esc(state.profile.bank)} · SWIFT ${esc(state.profile.swift)}). No cash to individuals. Queries: ${esc(state.profile.email)}.</p>
+  <div class="sigblock"><div>Rev. Samuel K. Langat · Senior Pastor</div><div>Chair, Projects & Finance Committee</div></div>`;
+}
+$("#commitForm").onsubmit=e=>{
+ e.preventDefault();
+ if(!$("#cName").value||!$("#cContact").value){toast("Name and contact are required");return;}
+ $("#cRef").textContent="PROP-2026-"+Math.floor(1000+Math.random()*9000);
+ state.log.unshift({t:new Date().toLocaleString("en-KE"),msg:"Proposal commitment received from "+$("#cName").value});
+ localStorage.setItem("bgc-admin",JSON.stringify(state));
+ e.target.hidden=true;$("#commitDone").hidden=false;
+};
+})();
+</script>
+</body>
+</html>
