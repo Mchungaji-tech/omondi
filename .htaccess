@@ -1,0 +1,48 @@
+# ------------------------------------------------------------------------------
+# 1. DEFAULT DIRECTORY INDEX
+# Loads index.php automatically when accessing the root domain or directories
+# ------------------------------------------------------------------------------
+DirectoryIndex index.php index.html
+
+# ------------------------------------------------------------------------------
+# 2. DISABLE DIRECTORY BROWSING
+# Prevents server from showing a list of files (Index of /) instead of the website
+# ------------------------------------------------------------------------------
+Options -Indexes
+
+# ------------------------------------------------------------------------------
+# 3. URL REWRITING & ROUTING
+# ------------------------------------------------------------------------------
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Block direct browser access to sensitive files
+    RewriteRule ^(\.env|\.git|\.cpanel\.yml|schema\.sql|install\.php|deploy\.php)$ - [F,L,NC]
+
+    # Optional: Support clean URLs (e.g., /about opens about.php)
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME}\.php -f
+    RewriteRule ^([^\.]+)$ $1.php [NC,L]
+</IfModule>
+
+# ------------------------------------------------------------------------------
+# 4. PROTECT SENSITIVE FILES
+# ------------------------------------------------------------------------------
+<FilesMatch "^(\.env|\.git.*|schema\.sql|\.htaccess)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# ------------------------------------------------------------------------------
+# 5. MIME TYPES & CACHE ENHANCEMENT
+# ------------------------------------------------------------------------------
+<IfModule mod_mime.c>
+    AddType text/css .css
+    AddType application/javascript .js
+    AddType image/svg+xml .svg
+</IfModule>
