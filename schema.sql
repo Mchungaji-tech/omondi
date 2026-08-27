@@ -36,6 +36,16 @@ CREATE TABLE IF NOT EXISTS `admin_mfa_setup_tokens` (
     CONSTRAINT `fk_mfa_setup_admin` FOREIGN KEY (`admin_id`) REFERENCES `admins`(`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS `admin_registration_tokens` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `token_hash` CHAR(64) NOT NULL UNIQUE,
+    `expires_at` DATETIME NOT NULL,
+    `used_at` DATETIME DEFAULT NULL,
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP,
+    KEY `idx_reg_token_hash` (`token_hash`),
+    KEY `idx_reg_token_expires` (`expires_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- --------------------------------------------------------------------
 -- 2. Public Users / Members Table (Separate Member Accounts)
 -- --------------------------------------------------------------------
