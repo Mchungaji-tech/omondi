@@ -52,9 +52,10 @@ $rootDir = preg_replace('#/(admin|api|includes|config|assets.*)$#', '', $scriptD
 $baseUrl = rtrim($protocol . $host . $rootDir, '/') . '/';
 define('BASE_URL', $baseUrl);
 
-// Do not expose stack traces or database details to visitors.
+// Error reporting based on environment/debug flag
+$debugMode = (!file_exists($envFile) || ($_ENV['APP_DEBUG'] ?? '0') === '1');
 error_reporting(E_ALL);
-ini_set('display_errors', 0);
+ini_set('display_errors', $debugMode ? 1 : 0);
 ini_set('log_errors', 1);
 
 // Set default timezone for Eldoret, Kenya (East Africa Time - UTC+3)
