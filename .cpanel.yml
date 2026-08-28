@@ -1,16 +1,4 @@
----
-# cPanel Git Version Control deployment file
-# Docs: https://docs.cpanel.net/cpanel/files/git-version-control/
-#
-# This syncs the repository checkout into the live document root at
-# /home/tektxbzg/morris (an addon domain / subdomain's DocumentRoot).
-#
-# NOTE: .env is intentionally excluded so this deployment never overwrites
-# the live production database credentials with the repo's local/dev .env.
-# On the very first deployment (before a live .env exists), open
-# https://your-domain/deploy.php once in a browser — it will generate the
-# .env, .htaccess, import schema.sql, and create the admin account, then
-# delete itself automatically.
+# This syncs the repository checkout into the live document root for morrisomondi.com (/home/tektxbzg/morris/)
 deployment:
   tasks:
     - export DEPLOYPATH=/home/tektxbzg/morris/

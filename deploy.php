@@ -73,12 +73,20 @@ if (file_put_contents($envPath, $envContent) !== false) {
 }
 
 // Step 2: Create .htaccess
-$htaccessContent = "<IfModule mod_rewrite.c>\n";
+$htaccessContent = "DirectoryIndex index.php index.html index.htm default.php\n\n";
+$htaccessContent .= "Options -Indexes\n\n";
+$htaccessContent .= "<IfModule mod_rewrite.c>\n";
 $htaccessContent .= "  RewriteEngine On\n";
-$htaccessContent .= "  RewriteRule ^(schema\.sql|install\.php|deploy\.php|\.env)$ - [F,L,NC]\n";
-$htaccessContent .= "</IfModule>\n";
-$htaccessContent .= "<IfModule mod_autoindex.c>\n";
-$htaccessContent .= "  Options -Indexes\n";
+$htaccessContent .= "  RewriteRule ^(schema\\.sql|install\\.php|deploy\\.php|\\.env)$ - [F,L,NC]\n";
+$htaccessContent .= "  RewriteCond %{REQUEST_FILENAME} !-d\n";
+$htaccessContent .= "  RewriteCond %{REQUEST_FILENAME} !-f\n";
+$htaccessContent .= "  RewriteCond %{REQUEST_FILENAME}.php -f\n";
+$htaccessContent .= "  RewriteRule ^([^\\.]+)$ $1.php [NC,L]\n";
+$htaccessContent .= "</IfModule>\n\n";
+$htaccessContent .= "<IfModule mod_mime.c>\n";
+$htaccessContent .= "  AddType text/css .css\n";
+$htaccessContent .= "  AddType application/javascript .js\n";
+$htaccessContent .= "  AddType image/svg+xml .svg\n";
 $htaccessContent .= "</IfModule>\n";
 
 if (file_put_contents($htaccessPath, $htaccessContent) !== false) {

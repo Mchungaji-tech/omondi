@@ -2,12 +2,13 @@
 # 1. DEFAULT DIRECTORY INDEX
 # Loads index.php automatically when accessing the root domain or directories
 # ------------------------------------------------------------------------------
-DirectoryIndex index.php
+DirectoryIndex index.php index.html index.htm default.php
 
 # ------------------------------------------------------------------------------
 # 2. DISABLE DIRECTORY BROWSING
 # Prevents server from showing a list of files (Index of /) instead of the website
 # ------------------------------------------------------------------------------
+Options -Indexes
 <IfModule mod_autoindex.c>
     Options -Indexes
 </IfModule>
