@@ -26,6 +26,7 @@ function __thumb_src($sermon) {
 
 $search = sanitize_input($_GET['q'] ?? '');
 $category = sanitize_input($_GET['cat'] ?? 'all');
+$categoriesList = db_fetch_all("SELECT DISTINCT category FROM sermons WHERE category != '' ORDER BY category ASC");
 
 $where = "WHERE 1=1";
 $params = [];
@@ -38,7 +39,7 @@ if ($category !== 'all' && !empty($category)) {
 }
 
 if (!empty($search)) {
-    $where .= " AND (title LIKE ? OR series LIKE ? OR scripture_ref LIKE ?)";
+    $where .= " AND (title LIKE ? OR series LIKE ? OR category LIKE ?)";
     $like = "%$search%";
     $params[] = $like;
     $params[] = $like;
@@ -603,18 +604,19 @@ h2.vtitle {
   <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;margin-bottom:28px;">
     <div class="filters">
       <a href="sermons.php?cat=all" class="<?= $category === 'all' ? 'on' : '' ?>">All Sermons</a>
-      <a href="sermons.php?cat=grace" class="<?= $category === 'grace' ? 'on' : '' ?>">Grace</a>
-      <a href="sermons.php?cat=john" class="<?= $category === 'john' ? 'on' : '' ?>">Gospel of John</a>
-      <a href="sermons.php?cat=psalms" class="<?= $category === 'psalms' ? 'on' : '' ?>">Psalms</a>
-      <a href="sermons.php?cat=family" class="<?= $category === 'family' ? 'on' : '' ?>">Family Altar</a>
-      <a href="sermons.php?cat=prayer" class="<?= $category === 'prayer' ? 'on' : '' ?>">Prayer</a>
+      <?php foreach ($categoriesList as $cl): 
+        $catName = trim($cl['category']);
+        if (empty($catName)) continue;
+      ?>
+        <a href="sermons.php?cat=<?= urlencode($catName) ?>" class="<?= strtolower($category) === strtolower($catName) ? 'on' : '' ?>"><?= esc(ucfirst($catName)) ?></a>
+      <?php endforeach; ?>
     </div>
 
     <form method="get" action="sermons.php" style="display:flex;gap:8px;">
       <?php if ($category !== 'all'): ?>
         <input type="hidden" name="cat" value="<?= esc($category) ?>">
       <?php endif; ?>
-      <input type="text" name="q" value="<?= esc($search) ?>" placeholder="Search scripture, title..." style="padding:8px 12px;border:1px solid var(--line);border-radius:4px;font-family:var(--ser);font-size:1rem;">
+      <input type="text" name="q" value="<?= esc($search) ?>" placeholder="Search sermon or series..." style="padding:8px 12px;border:1px solid var(--line);border-radius:4px;font-family:var(--ser);font-size:1rem;">
       <button type="submit" class="btn sm">Search</button>
     </form>
   </div>
@@ -622,7 +624,7 @@ h2.vtitle {
   <?php if (empty($sermons)): ?>
     <div style="text-align:center;padding:60px 20px;background:var(--card);border:1px solid var(--line);border-radius:12px;">
       <p style="font-family:var(--disp);font-size:1.8rem;color:var(--wine);margin-bottom:8px;">No Sermons Found</p>
-      <p style="color:var(--ink2);margin-bottom:18px;">No sermons matched your filter criteria. Try another series or clear search.</p>
+      <p style="color:var(--ink2);margin-bottom:18px;">No sermons matched your filter criteria. Try another category or clear search.</p>
       <a href="sermons.php" class="btn sm ghost">Reset Filters</a>
     </div>
   <?php else: ?>
@@ -640,15 +642,12 @@ h2.vtitle {
           <span class="vseries-top" id="vseriesTop">— Select a sermon from the queue —</span>
           <h2 class="vtitle" id="vtitle">The Word of God Awaits</h2>
           <div class="vstat-row">
-            <span class="sd">📅 <b>—</b></span>
-            <span class="sdur">⏱ <b>—</b></span>
+            <span class="sdur">⏱ <b id="mainDuration">—</b></span>
             <span class="chip vchip" id="curChip">—</span>
-            <span>👁 <b id="mainViewCount"><?= number_format($decorViews) ?></b> views</span>
+            <span>👁 <b id="mainViewCount"><?= number_format($decorViews ?? 0) ?></b> views</span>
             <span>💬 <b class="cm-count">0</b> conversations</span>
           </div>
-          <div class="vscripture" id="vscripture">
-            &ldquo;Your word is a lamp to my feet and a light to my path.&rdquo; — Psalm 119:105
-          </div>
+          <div class="vscripture" id="vscripture" style="display:none;"></div>
           <div class="vactions">
             <button data-act="save">💾 Save</button>
             <button data-act="share">🔁 Share</button>
@@ -683,11 +682,10 @@ h2.vtitle {
                 <span class="qd"><?= esc($s['duration']) ?></span>
               </div>
               <div class="qinfo">
-                <span class="qser"><?= esc($s['series']) ?></span>
+                <span class="qser"><?= esc($s['series'] ?: $s['category']) ?></span>
                 <div class="qt"><?= esc($s['title']) ?></div>
-                <div class="qref"><?= esc($s['scripture_ref']) ?></div>
                 <div class="qm">
-                  <span class="date"><?= esc($s['sermon_date']) ?></span>
+                  <span class="chip" style="font-size:10.5px;padding:2px 8px;border-color:var(--line);"><?= esc(ucfirst($s['category'])) ?></span>
                   <span class="views-badge" data-views="<?= (int)$s['id'] ?>">👁 <?= number_format($decorViews) ?></span>
                 </div>
               </div>
@@ -847,9 +845,16 @@ h2.vtitle {
 
     if (vseries) vseries.textContent = series || '—';
     if (vtitle) vtitle.textContent = title || 'Untitled Sermon';
-    if (sd) sd.textContent = date || '—';
-    if (sdur) sdur.textContent = dur || '—';
-    if (vscripture) vscripture.textContent = scripture || '—';
+    var mainDur = document.getElementById('mainDuration');
+    if (mainDur) mainDur.textContent = dur || '—';
+    if (vscripture) {
+      if (scripture && scripture.trim() !== '') {
+        vscripture.style.display = 'block';
+        vscripture.textContent = scripture;
+      } else {
+        vscripture.style.display = 'none';
+      }
+    }
     if (curChip) {
       curChip.textContent = platformLabel(plat);
       curChip.className = 'chip vchip ' + (plat === 'yt' || plat === 'fb' || plat === 'vm' ? plat : '');

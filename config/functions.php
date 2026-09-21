@@ -86,6 +86,84 @@ function ensure_project_images_table() {
     if ($done) return;
     $done = true;
     db_query("CREATE TABLE IF NOT EXISTS `project_images` (`id` INT AUTO_INCREMENT PRIMARY KEY, `project_id` INT NOT NULL, `image_url` VARCHAR(500) NOT NULL, `sort_order` INT NOT NULL DEFAULT 0, `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP, KEY `idx_project_images_project` (`project_id`), CONSTRAINT `fk_project_images_project` FOREIGN KEY (`project_id`) REFERENCES `projects`(`id`) ON DELETE CASCADE) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+
+    // Auto-sync capital projects proposals if database has legacy or missing records
+    $check = db_fetch_one("SELECT name FROM projects WHERE id = 1");
+    if (!$check || strpos($check['name'] ?? '', 'Sanctuary Upgrade') === false) {
+        $p1 = [
+            'name' => 'Sanctuary Upgrade — 200 Chairs, Gypsum Altar & Big Screens',
+            'status' => 'ongoing',
+            'raised' => 350000.00,
+            'goal' => 920000.00,
+            'img' => 'uploads/projects/sanctuary_interior_plan.jpg',
+            'summary' => 'Comprehensive interior sanctuary revitalization to expand seating capacity and elevate the worship and media broadcast experience at Redeemed Gospel Church Eldoret. Scope includes procuring 200 high-density cushioned sanctuary chairs (200 units @ KSh 2,100 each = KSh 420,000), fabricating a bespoke stepped altar stage with custom architectural gypsum ceiling and warm ambient LED cove lighting (KSh 200,000), and installing two ultra-bright large LED video screens and digital AV signal distribution (KSh 300,000).',
+            'budget' => "200 New Cushioned Sanctuary Chairs (200 @ KSh 2,100)|420000\nAltar Architectural Gypsum Design & Ambient Lighting|200000\nHigh-Definition Sanctuary Big Display Screens & AV System|300000",
+            'sort' => 1
+        ];
+        $p2 = [
+            'name' => 'Front Porch Terrazzo & Exterior Wall Plastering',
+            'status' => 'ongoing',
+            'raised' => 45000.00,
+            'goal' => 150000.00,
+            'img' => 'uploads/projects/porch_terrazzo_exterior.jpg',
+            'summary' => 'Exterior rehabilitation and entrance enhancement project for the church sanctuary and auditorium. Scope entails casting and polishing high-durability speckled terrazzo flooring across the front porch and entrance stairs (KSh 50,000), complete external wall plastering to repair, seal, and smooth all exterior outside walls (KSh 80,000), and applying weather-resistant protective coatings and finishing paint (KSh 20,000).',
+            'budget' => "Front Porch Terrazzo Floor Finishing (Cast-in-place & Polished)|50000\nExterior Outside Wall Plastering & Surface Preparation|80000\nWeather-Resistant Exterior Finishing Coat & Paint|20000",
+            'sort' => 2
+        ];
+        $p3 = [
+            'name' => 'Integrated Multi-Storey Complex — Church Offices & School',
+            'status' => 'planning',
+            'raised' => 5200000.00,
+            'goal' => 30000000.00,
+            'img' => 'uploads/projects/multistorey_school_office_complex.jpg',
+            'summary' => 'A flagship landmark multi-storey facility combining central church administration with an integrated Christian primary and secondary academy in Eldoret. The ground floor accommodates pastoral executive suites, central church administration, counseling rooms, and boardroom. The first and second storeys feature modern classrooms, dedicated science laboratories, computer ICT lab, and library with bursary opportunities for underprivileged children from Langas and Huruma.',
+            'budget' => "Substructure & Multi-Storey Reinforced Foundations|6500000\nGround Floor: Church Administration Offices & Pastoral Suites|7500000\nFirst Floor: Primary & Junior Academy Classrooms & Staff Room|6500000\nSecond Floor: Senior Classrooms, ICT Computer Lab & Science Labs|5500000\nCommercial Roofing, Rooftop Solar Power Array & Water Harvesting|2500000\nInternal & External Plastering, Acoustic Ceilings, Glazing & Cabling|1500000",
+            'sort' => 3
+        ];
+        $p4 = [
+            'name' => 'Ministry Fleet — 4 Vehicles for Outreach',
+            'status' => 'ongoing',
+            'raised' => 2100000.00,
+            'goal' => 7000000.00,
+            'img' => 'https://picsum.photos/seed/ministry-fleet-vehicles/800/400',
+            'summary' => 'Four dedicated ministry vehicles to serve the North Rift: a 14-seater for crusades and hospital visits, a 9-seater for youth camps, a pickup for field logistics and widows outreach, and a sedan for pastoral administration and elder meetings.',
+            'budget' => "14-seater Toyota Hiace (crusades & hospital)|2200000\n9-seater Toyota Hiace (youth camps & transport)|1500000\nPick-up truck (field logistics, widows outreach)|1800000\nExecutive sedan (pastoral visits & admin)|1200000\nInsurance & branding (all 4 vehicles, 1 year)|200000",
+            'sort' => 4
+        ];
+        $p5 = [
+            'name' => 'Widows, Orphans & Bursary Fund — Annual Operation',
+            'status' => 'ongoing',
+            'raised' => 800000.00,
+            'goal' => 5000000.00,
+            'img' => 'https://picsum.photos/seed/widows-orphans-bursary/800/400',
+            'summary' => 'Sustained financial support for 120 widows households and 200 vulnerable students across Uasin Gishu. Covers school fees, termly bursaries, monthly food parcels, basic medical support, and emergency relief for the most vulnerable.',
+            'budget' => "School fees bursary (200 students @ KSh 8,000/term)|1600000\nFood parcels for 120 widows (monthly @ KSh 2,000)|720000\nBasic medical & health support|480000\nEmergency relief (funerals, fire, sickness)|200000\nAdministration & field verification|200000\nBursary review & report printing|100000\nContingency buffer|200000",
+            'sort' => 5
+        ];
+
+        $projectsToSync = [1 => $p1, 2 => $p2, 3 => $p3, 4 => $p4, 5 => $p5];
+        foreach ($projectsToSync as $id => $p) {
+            $rowExists = db_fetch_one("SELECT id FROM projects WHERE id = ?", "i", [$id]);
+            if ($rowExists) {
+                db_query("UPDATE projects SET name = ?, status = ?, raised_amount = ?, goal_amount = ?, image_url = ?, summary = ?, budget_text = ?, sort_order = ? WHERE id = ?", "ssddsssii", [$p['name'], $p['status'], $p['raised'], $p['goal'], $p['img'], $p['summary'], $p['budget'], $p['sort'], $id]);
+            } else {
+                db_query("INSERT INTO projects (id, name, status, raised_amount, goal_amount, image_url, summary, budget_text, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", "issddsssi", [$id, $p['name'], $p['status'], $p['raised'], $p['goal'], $p['img'], $p['summary'], $p['budget'], $p['sort']]);
+            }
+        }
+
+        $galleryImages = [
+            [1, 'uploads/projects/altar_gypsum_screens_closeup.jpg', 1],
+            [1, 'uploads/projects/sanctuary_interior_plan.jpg', 2],
+            [2, 'uploads/projects/porch_terrazzo_exterior.jpg', 1],
+            [3, 'uploads/projects/multistorey_school_office_complex.jpg', 1]
+        ];
+        foreach ($galleryImages as [$pId, $imgUrl, $order]) {
+            $imgExists = db_fetch_one("SELECT id FROM project_images WHERE project_id = ? AND image_url = ?", "is", [$pId, $imgUrl]);
+            if (!$imgExists) {
+                db_query("INSERT INTO project_images (project_id, image_url, sort_order) VALUES (?, ?, ?)", "isi", [$pId, $imgUrl, $order]);
+            }
+        }
+    }
 }
 
 /* ==========================================================================

@@ -17,10 +17,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($action === 'create' || $action === 'update') {
         $title = sanitize_input($_POST['title'] ?? '');
         $series = sanitize_input($_POST['series'] ?? '');
-        $ref = sanitize_input($_POST['scripture_ref'] ?? '');
-        $date = sanitize_input($_POST['sermon_date'] ?? date('M d, Y'));
+        $ref = '';
+        $date = '';
         $dur = sanitize_input($_POST['duration'] ?? '45:00');
-        $cat = sanitize_input($_POST['category'] ?? 'grace');
+        $cat = sanitize_input($_POST['category'] ?? 'General');
         $audioUrl = sanitize_input($_POST['audio_url'] ?? '');
         $sortOrder = (int)($_POST['sort_order'] ?? 0);
 
@@ -85,9 +85,8 @@ if (!empty($sermonIds)) {
     <thead>
       <tr>
         <th>Title &amp; Series</th>
-        <th>Scripture Ref</th>
         <th>Category</th>
-        <th>Date</th>
+        <th>Runtime</th>
         <th>Video Source</th>
         <th>Views</th>
         <th>Actions</th>
@@ -95,7 +94,7 @@ if (!empty($sermonIds)) {
     </thead>
     <tbody>
       <?php if (empty($sermons)): ?>
-        <tr><td colspan="7" style="text-align:center;padding:30px;">No sermons in library yet.</td></tr>
+        <tr><td colspan="6" style="text-align:center;padding:30px;">No sermons in library yet.</td></tr>
       <?php else: ?>
         <?php foreach ($sermons as $s): ?>
           <tr>
@@ -103,9 +102,8 @@ if (!empty($sermonIds)) {
               <b><?= esc($s['title']) ?></b><br>
               <span class="ser" style="color:var(--ink2);"><?= esc($s['series']) ?></span>
             </td>
-            <td><i><?= esc($s['scripture_ref']) ?></i></td>
             <td><span class="chip wine"><?= esc($s['category']) ?></span></td>
-            <td class="mono" style="font-size:11px;"><?= esc($s['sermon_date']) ?></td>
+            <td class="mono" style="font-size:11px;"><?= esc($s['duration'] ?: '—') ?></td>
              <td>
                <?php if (stripos($s['audio_url'], 'youtu') !== false): ?>
                  <span class="chip" style="background:rgba(255,0,0,.08);color:#c00;border-color:rgba(255,0,0,.25);">▶ YouTube</span>
@@ -160,25 +158,8 @@ if (!empty($sermonIds)) {
 
       <div class="mrow2">
         <div class="field">
-          <label>Scripture Reference</label>
-          <input type="text" name="scripture_ref" placeholder="e.g. Luke 15:11–32">
-        </div>
-        <div class="field">
-          <label>Category</label>
-          <select name="category">
-            <option value="grace">Grace</option>
-            <option value="john">Gospel of John</option>
-            <option value="psalms">Psalms</option>
-            <option value="family">Family Altar</option>
-            <option value="prayer">Prayer</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="mrow2">
-        <div class="field">
-          <label>Date Preached</label>
-          <input type="text" name="sermon_date" value="<?= date('M d, Y') ?>">
+          <label>Category (Manual Entry) *</label>
+          <input type="text" name="category" placeholder="e.g. Grace, Sunday Service, Revival..." value="Grace" required>
         </div>
         <div class="field">
           <label>Runtime Label (optional, display only e.g. 45:00)</label>
@@ -222,23 +203,8 @@ if (!empty($sermonIds)) {
 
         <div class="mrow2">
           <div class="field">
-            <label>Scripture Reference</label>
-            <input type="text" name="scripture_ref" value="<?= esc($editSermon['scripture_ref']) ?>">
-          </div>
-          <div class="field">
-            <label>Category</label>
-            <select name="category">
-              <?php foreach (['grace', 'john', 'psalms', 'family', 'prayer'] as $cat): ?>
-                <option value="<?= $cat ?>" <?= $editSermon['category'] === $cat ? 'selected' : '' ?>><?= ucfirst($cat) ?></option>
-              <?php endforeach; ?>
-            </select>
-          </div>
-        </div>
-
-        <div class="mrow2">
-          <div class="field">
-            <label>Date Preached</label>
-            <input type="text" name="sermon_date" value="<?= esc($editSermon['sermon_date']) ?>">
+            <label>Category (Manual Entry) *</label>
+            <input type="text" name="category" value="<?= esc($editSermon['category'] ?? '') ?>" placeholder="e.g. Grace, Revival, Sunday Service..." required>
           </div>
           <div class="field">
             <label>Runtime Label (optional, display only e.g. 45:00)</label>
