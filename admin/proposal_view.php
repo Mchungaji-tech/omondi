@@ -35,6 +35,11 @@ if ($currentProject && !empty($currentProject['budget_text'])) {
     }
 }
 
+$projectImages = [];
+if ($currentProject) {
+    $projectImages = db_fetch_all("SELECT image_url FROM project_images WHERE project_id = ? ORDER BY sort_order ASC, id ASC", "i", [$currentProject['id']]);
+}
+
 // Handle Admin Commitment Log POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_verify();
@@ -96,6 +101,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="meta">
           PARTNERSHIP PROPOSAL · STATUS: <?= strtoupper($currentProject['status']) ?> · RAISED <?= format_ksh($currentProject['raised_amount']) ?> OF <?= format_ksh($currentProject['goal_amount']) ?> (<?= $pct ?>%)
         </div>
+
+        <div style="position:relative;margin:20px 0 25px;border-radius:8px;overflow:hidden;border:1px solid var(--line);max-height:380px;">
+          <img src="<?= esc(img_src($currentProject['image_url'])) ?>" alt="<?= esc($currentProject['name']) ?>" style="width:100%;height:100%;max-height:380px;object-fit:cover;display:block;">
+        </div>
+        <?php if (!empty($projectImages)): ?>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));gap:12px;margin:-10px 0 24px;">
+            <?php foreach ($projectImages as $image): ?>
+              <div style="border-radius:6px;overflow:hidden;border:1px solid var(--line);">
+                <img src="<?= esc(img_src($image['image_url'])) ?>" alt="<?= esc($currentProject['name']) ?> plan concept" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;">
+              </div>
+            <?php endforeach; ?>
+          </div>
+        <?php endif; ?>
 
         <h4>1 · Executive Summary</h4>
         <p><?= nl2br(esc($currentProject['summary'])) ?> This proposal invites partners — individuals, churches, businesses, and the diaspora — to co-labour with Redeemed Gospel Church Eldoret in completing this work, with full quarterly reporting and an annual independent audit.</p>

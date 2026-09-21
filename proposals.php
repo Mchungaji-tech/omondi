@@ -117,12 +117,24 @@ require_once __DIR__ . '/includes/header.php';
             PARTNERSHIP PROPOSAL · STATUS: <?= strtoupper($currentProject['status']) ?> · RAISED <?= format_ksh($currentProject['raised_amount']) ?> OF <?= format_ksh($currentProject['goal_amount']) ?> (<?= $pct ?>%)
           </div>
 
-          <div style="margin:20px 0 30px;border-radius:6px;overflow:hidden;border:1px solid var(--line);max-height:360px;">
-            <img src="<?= esc(img_src($currentProject['image_url'])) ?>" alt="<?= esc($currentProject['name']) ?>" style="width:100%;height:100%;object-fit:cover;">
+          <div style="position:relative;margin:20px 0 25px;border-radius:8px;overflow:hidden;border:1px solid var(--line);max-height:420px;box-shadow:0 6px 20px rgba(0,0,0,0.06);">
+            <img src="<?= esc(img_src($currentProject['image_url'])) ?>" alt="<?= esc($currentProject['name']) ?>" style="width:100%;height:100%;max-height:420px;object-fit:cover;display:block;">
+            <div style="position:absolute;bottom:12px;left:14px;background:rgba(25,22,19,0.85);color:#fff;backdrop-filter:blur(8px);padding:5px 14px;border-radius:20px;font-size:11px;font-family:var(--mono);letter-spacing:.06em;display:flex;align-items:center;gap:6px;">
+              <span style="color:var(--gold);">✦</span> Proposed Architectural &amp; Concept Plan
+            </div>
           </div>
-          <?php if (!empty($projectImages)): ?><div class="project-gallery" aria-label="Project photos">
-            <?php foreach ($projectImages as $image): ?><img src="<?= esc(img_src($image['image_url'])) ?>" alt="<?= esc($currentProject['name']) ?> project photo"><?php endforeach; ?>
-          </div><?php endif; ?>
+          <?php if (!empty($projectImages)): ?>
+            <div style="margin:-10px 0 26px;">
+              <p style="font-family:var(--mono);font-size:11px;color:var(--ink2);margin-bottom:10px;text-transform:uppercase;letter-spacing:.08em;">✦ Proposed Visual Perspectives &amp; Architectural Plans:</p>
+              <div class="project-gallery" aria-label="Project photos">
+                <?php foreach ($projectImages as $image): ?>
+                  <a href="<?= esc(img_src($image['image_url'])) ?>" target="_blank" rel="noopener" title="Open Full High-Resolution Plan" style="display:block;border-radius:6px;overflow:hidden;border:1px solid var(--line);transition:transform .2s ease;box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+                    <img src="<?= esc(img_src($image['image_url'])) ?>" alt="<?= esc($currentProject['name']) ?> plan concept" style="width:100%;aspect-ratio:16/9;object-fit:cover;display:block;">
+                  </a>
+                <?php endforeach; ?>
+              </div>
+            </div>
+          <?php endif; ?>
 
           <h4>1 · Executive Summary</h4>
           <p><?= nl2br(esc($currentProject['summary'])) ?> This proposal invites partners — individuals, churches, businesses, and the diaspora — to co-labour with Redeemed Gospel Church Eldoret in completing this work, with full quarterly reporting and an annual independent audit.</p>
