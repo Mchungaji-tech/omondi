@@ -151,7 +151,10 @@ $projects = db_fetch_all("SELECT * FROM projects $where ORDER BY sort_order ASC,
 <!-- ADD PROJECT MODAL -->
 <div class="modal" id="addModal" hidden>
   <div class="mcard-modal" style="width:min(680px,100%);">
-    <h3>Create Project Proposal</h3>
+    <div class="mcard-head">
+      <h3>Create Project Proposal</h3>
+      <button type="button" class="modal-cancel-btn" onclick="closeAdminModal('addModal')">✕ Cancel</button>
+    </div>
     <form method="post" enctype="multipart/form-data">
       <?= csrf_field() ?>
       <input type="hidden" name="action" value="create">
@@ -224,7 +227,10 @@ $projects = db_fetch_all("SELECT * FROM projects $where ORDER BY sort_order ASC,
 <?php if ($editProj): ?>
   <div class="modal" id="editModal" role="dialog" aria-modal="true" aria-labelledby="editProjectTitle">
     <div class="mcard-modal" style="width:min(680px,100%);">
-      <h3 id="editProjectTitle">Edit Project Details: <?= esc($editProj['name']) ?></h3>
+      <div class="mcard-head">
+        <h3 id="editProjectTitle">Edit Project Details: <?= esc($editProj['name']) ?></h3>
+        <a href="projects.php" class="modal-cancel-btn">✕ Cancel</a>
+      </div>
       <form method="post" enctype="multipart/form-data">
         <?= csrf_field() ?>
         <input type="hidden" name="action" value="update">

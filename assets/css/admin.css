@@ -708,16 +708,21 @@ td .act {
 }
 
 /* ============ MODALS & TOASTS ============ */
+.modal[hidden],
+[hidden] {
+  display: none !important;
+}
+
 .modal {
   position: fixed;
   inset: 0;
   z-index: 90;
-  background: rgba(23, 18, 14, 0.6);
+  background: rgba(23, 18, 14, 0.65);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(5px);
 }
 
 .mcard-modal {
@@ -727,8 +732,60 @@ td .act {
   width: min(580px, 100%);
   max-height: 90vh;
   overflow-y: auto;
-  padding: 32px;
-  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.4);
+  padding: 28px 32px;
+  box-shadow: 0 40px 90px rgba(0, 0, 0, 0.45);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.modal-shake {
+  animation: modalShake 0.35s ease-in-out;
+  box-shadow: 0 0 0 4px rgba(140, 29, 47, 0.4), 0 40px 90px rgba(0, 0, 0, 0.45) !important;
+}
+
+@keyframes modalShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-6px); }
+  40%, 80% { transform: translateX(6px); }
+}
+
+.mcard-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.mcard-head h3 {
+  margin: 0;
+  font-size: 1.35rem;
+}
+
+.modal-cancel-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(140, 29, 47, 0.08);
+  color: var(--wine);
+  border: 1px solid rgba(140, 29, 47, 0.3);
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.2s;
+  flex-shrink: 0;
+}
+
+.modal-cancel-btn:hover {
+  background: var(--wine);
+  color: #fff;
+  border-color: var(--wine);
 }
 
 .mcard-modal h3 {

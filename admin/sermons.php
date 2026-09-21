@@ -141,7 +141,10 @@ if (!empty($sermonIds)) {
 <!-- ADD MODAL -->
 <div class="modal" id="addModal" hidden>
   <div class="mcard-modal">
-    <h3>Add New Sermon to Library</h3>
+    <div class="mcard-head">
+      <h3>Add New Sermon to Library</h3>
+      <button type="button" class="modal-cancel-btn" onclick="closeAdminModal('addModal')">✕ Cancel</button>
+    </div>
     <form method="post">
       <?= csrf_field() ?>
       <input type="hidden" name="action" value="create">
@@ -185,7 +188,10 @@ if (!empty($sermonIds)) {
 <?php if ($editSermon): ?>
   <div class="modal" id="editModal">
     <div class="mcard-modal">
-      <h3>Edit Sermon: <?= esc($editSermon['title']) ?></h3>
+      <div class="mcard-head">
+        <h3>Edit Sermon: <?= esc($editSermon['title']) ?></h3>
+        <a href="sermons.php" class="modal-cancel-btn">✕ Cancel</a>
+      </div>
       <form method="post">
         <?= csrf_field() ?>
         <input type="hidden" name="action" value="update">

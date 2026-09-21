@@ -166,7 +166,10 @@ $editProgram = isset($_GET['edit_program']) ? db_fetch_one("SELECT * FROM suppor
 <?php if ($editFund): ?>
 <div class="modal" id="editFundModal">
   <div class="mcard-modal">
-    <h3>Edit Fund Goal</h3>
+    <div class="mcard-head">
+      <h3>Edit Fund Goal</h3>
+      <a href="programs.php" class="modal-cancel-btn">✕ Cancel</a>
+    </div>
     <form method="post">
       <?= csrf_field() ?>
       <input type="hidden" name="action" value="update_fund">
@@ -186,7 +189,10 @@ $editProgram = isset($_GET['edit_program']) ? db_fetch_one("SELECT * FROM suppor
 <?php if ($editProgram): ?>
 <div class="modal" id="editProgramModal">
   <div class="mcard-modal">
-    <h3>Edit Support Programme</h3>
+    <div class="mcard-head">
+      <h3>Edit Support Programme</h3>
+      <a href="programs.php" class="modal-cancel-btn">✕ Cancel</a>
+    </div>
     <form method="post">
       <?= csrf_field() ?>
       <input type="hidden" name="action" value="update_program">
@@ -206,7 +212,10 @@ $editProgram = isset($_GET['edit_program']) ? db_fetch_one("SELECT * FROM suppor
 <!-- MODAL: ADD FUND -->
 <div class="modal" id="fundModal" hidden>
   <div class="mcard-modal">
-    <h3>Add Fund Goal</h3>
+    <div class="mcard-head">
+      <h3>Add Fund Goal</h3>
+      <button type="button" class="modal-cancel-btn" onclick="closeAdminModal('fundModal')">✕ Cancel</button>
+    </div>
     <form method="post">
       <?= csrf_field() ?>
       <input type="hidden" name="action" value="create_fund">
@@ -243,7 +252,10 @@ $editProgram = isset($_GET['edit_program']) ? db_fetch_one("SELECT * FROM suppor
 <!-- MODAL: ADD PROGRAMME -->
 <div class="modal" id="progModal" hidden>
   <div class="mcard-modal">
-    <h3>Add Support Programme</h3>
+    <div class="mcard-head">
+      <h3>Add Support Programme</h3>
+      <button type="button" class="modal-cancel-btn" onclick="closeAdminModal('progModal')">✕ Cancel</button>
+    </div>
     <form method="post">
       <?= csrf_field() ?>
       <input type="hidden" name="action" value="create_program">

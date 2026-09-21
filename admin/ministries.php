@@ -107,7 +107,10 @@ $ministries = db_fetch_all("SELECT * FROM ministries ORDER BY sort_order ASC, id
 <!-- ADD MODAL -->
 <div class="modal" id="addModal" hidden>
   <div class="mcard-modal">
-    <h3>Add New Ministry</h3>
+    <div class="mcard-head">
+      <h3>Add New Ministry</h3>
+      <button type="button" class="modal-cancel-btn" onclick="closeAdminModal('addModal')">✕ Cancel</button>
+    </div>
     <form method="post" enctype="multipart/form-data">
       <?= csrf_field() ?>
       <input type="hidden" name="action" value="create">
@@ -167,7 +170,10 @@ $ministries = db_fetch_all("SELECT * FROM ministries ORDER BY sort_order ASC, id
 <?php if ($editMinistry): ?>
   <div class="modal" id="editModal">
     <div class="mcard-modal">
-      <h3>Edit Ministry: <?= esc($editMinistry['name']) ?></h3>
+      <div class="mcard-head">
+        <h3>Edit Ministry: <?= esc($editMinistry['name']) ?></h3>
+        <a href="ministries.php" class="modal-cancel-btn">✕ Cancel</a>
+      </div>
       <form method="post" enctype="multipart/form-data">
         <?= csrf_field() ?>
         <input type="hidden" name="action" value="update">

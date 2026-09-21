@@ -98,7 +98,10 @@ $photos = db_fetch_all("SELECT * FROM gallery ORDER BY sort_order ASC, id ASC");
 <!-- ADD PHOTO MODAL -->
 <div class="modal" id="addModal" hidden>
   <div class="mcard-modal">
-    <h3>Upload Gallery Photo</h3>
+    <div class="mcard-head">
+      <h3>Upload Gallery Photo</h3>
+      <button type="button" class="modal-cancel-btn" onclick="closeAdminModal('addModal')">✕ Cancel</button>
+    </div>
     <form method="post" enctype="multipart/form-data">
       <?= csrf_field() ?>
       <input type="hidden" name="action" value="create">
@@ -150,7 +153,10 @@ $photos = db_fetch_all("SELECT * FROM gallery ORDER BY sort_order ASC, id ASC");
 <?php if ($editItem): ?>
   <div class="modal" id="editModal">
     <div class="mcard-modal">
-      <h3>Edit Photo</h3>
+      <div class="mcard-head">
+        <h3>Edit Photo</h3>
+        <a href="gallery.php" class="modal-cancel-btn">✕ Cancel</a>
+      </div>
       <form method="post" enctype="multipart/form-data">
         <?= csrf_field() ?>
         <input type="hidden" name="action" value="update">

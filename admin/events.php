@@ -115,7 +115,10 @@ $events = db_fetch_all("SELECT * FROM events ORDER BY sort_order ASC, id ASC");
 <!-- ADD MODAL -->
 <div class="modal" id="addModal" hidden>
   <div class="mcard-modal">
-    <h3>Add Upcoming Event</h3>
+    <div class="mcard-head">
+      <h3>Add Upcoming Event</h3>
+      <button type="button" class="modal-cancel-btn" onclick="closeAdminModal('addModal')">✕ Cancel</button>
+    </div>
     <form method="post" enctype="multipart/form-data">
       <?= csrf_field() ?>
       <input type="hidden" name="action" value="create">
@@ -186,7 +189,10 @@ $events = db_fetch_all("SELECT * FROM events ORDER BY sort_order ASC, id ASC");
 <?php if ($editEvent): ?>
   <div class="modal" id="editModal">
     <div class="mcard-modal">
-      <h3>Edit Event</h3>
+      <div class="mcard-head">
+        <h3>Edit Event</h3>
+        <a href="events.php" class="modal-cancel-btn">✕ Cancel</a>
+      </div>
       <form method="post" enctype="multipart/form-data">
         <?= csrf_field() ?>
         <input type="hidden" name="action" value="update">

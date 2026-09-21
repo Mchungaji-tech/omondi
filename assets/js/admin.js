@@ -36,18 +36,53 @@
   /* ============ 1. MODAL CONTROLS ============ */
   window.openAdminModal = function (modalId) {
     const m = document.getElementById(modalId);
-    if (m) m.hidden = false;
+    if (m) {
+      m.hidden = false;
+      m.removeAttribute('hidden');
+      m.style.display = 'flex';
+      document.body.classList.add('modal-open');
+    }
   };
 
   window.closeAdminModal = function (modalId) {
     const m = document.getElementById(modalId);
-    if (m) m.hidden = true;
+    if (m) {
+      m.hidden = true;
+      m.setAttribute('hidden', '');
+      m.style.display = 'none';
+      document.body.classList.remove('modal-open');
+    }
   };
 
-  // Close modals when clicking outside modal box
+  // User requirement: Modal CANNOT go away when clicking outside or anywhere on backdrop.
+  // It ONLY closes when the Cancel button is explicitly clicked!
   document.addEventListener("click", (e) => {
-    if (e.target.classList.contains("modal")) {
-      e.target.hidden = true;
+    // If user clicked the dark backdrop outside the modal card:
+    if (e.target.classList && e.target.classList.contains("modal")) {
+      e.preventDefault();
+      e.stopPropagation();
+      const card = e.target.querySelector(".mcard-modal");
+      if (card) {
+        card.classList.remove("modal-shake");
+        void card.offsetWidth; // Trigger reflow for re-animation
+        card.classList.add("modal-shake");
+      }
+    }
+  });
+
+  // Do not dismiss modals on Escape key — must press Cancel button
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      const openModal = document.querySelector(".modal:not([hidden])");
+      if (openModal && openModal.style.display !== "none") {
+        e.preventDefault();
+        const card = openModal.querySelector(".mcard-modal");
+        if (card) {
+          card.classList.remove("modal-shake");
+          void card.offsetWidth;
+          card.classList.add("modal-shake");
+        }
+      }
     }
   });
 
