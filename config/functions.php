@@ -78,7 +78,116 @@ function img_src($image_value, $fallback = '') {
     if (preg_match('#^https?://#i', $v)) {
         return $v;
     }
-    return rtrim(BASE_URL, '/') . '/' . ltrim($v, '/');
+    $cleanPath = ltrim($v, '/');
+    $fullUrl = rtrim(BASE_URL, '/') . '/' . $cleanPath;
+    $localFile = __DIR__ . '/../' . $cleanPath;
+    if (file_exists($localFile)) {
+        $fullUrl .= '?v=' . filemtime($localFile);
+    }
+    return $fullUrl;
+}
+
+/**
+ * Ensure journey_milestones table exists with initial seed data
+ */
+function ensure_journey_table() {
+    static $done = false;
+    if ($done) return;
+    $done = true;
+
+    $sql = "CREATE TABLE IF NOT EXISTS `journey_milestones` (
+        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        `year_label` VARCHAR(50) NOT NULL,
+        `title` VARCHAR(150) NOT NULL,
+        `description` TEXT NOT NULL,
+        `tag` VARCHAR(100) NOT NULL DEFAULT '',
+        `image_url` VARCHAR(500) NOT NULL DEFAULT '',
+        `sort_order` INT NOT NULL DEFAULT 0,
+        `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+    @db_query($sql);
+
+    // If table is empty, seed with the 6 foundational journey milestones
+    $count = db_fetch_one("SELECT COUNT(*) as c FROM journey_milestones");
+    if (!$count || (int)($count['c'] ?? 0) === 0) {
+        $seeds = [
+            [
+                '1995',
+                'Founded in January',
+                'Founded by Pastor Morris Omondi and Grace Olweny, Redeemed Gospel Church Eldoret grew through evangelistic crusades and became a beacon of spiritual influence in the region.',
+                'Our Beginning',
+                'https://picsum.photos/seed/church-beginning-1995/700/460',
+                1
+            ],
+            [
+                'Ministry',
+                'Our Ministry',
+                'We have planted churches across various locations and authored books on spiritual growth. Our upcoming book, \"Kingdom Living,\" aims to inspire and equip believers.',
+                'Church Planting',
+                'https://picsum.photos/seed/pastoral-ministry-eldoret/700/460',
+                2
+            ],
+            [
+                '2000',
+                'Leadership Journey',
+                'Pastor Morris Omondi was ordained as a pastor in 2000, an overseer in 2002, and a bishop in 2012. He now oversees Western Region churches.',
+                'Leadership',
+                'https://picsum.photos/seed/ordination-bishop-omondi/700/460',
+                3
+            ],
+            [
+                'Family',
+                'Our Family',
+                'Bishop Morris and Rev. Grace Omondi have three children - Joan, Eunice, and Pastor Timothy Omondi - who are devoted to the Lord and active in ministry.',
+                'Faith at Home',
+                'https://picsum.photos/seed/family-faith-eldoret/700/460',
+                4
+            ],
+            [
+                'Today',
+                'Our Present',
+                'Our sanctuary, built for Christ\'s glory, continues to grow as we pray for more souls to join God\'s kingdom. The church has a capacity of 1,200 members.',
+                'Growing Together',
+                'https://picsum.photos/seed/redeemed-sanctuary-eldoret/700/460',
+                5
+            ],
+            [
+                'Global',
+                'Global Impact',
+                'Bishop Omondi, a prolific author and sought-after preacher, has shared the Gospel across Africa, Europe, and North America, offering wisdom and encouragement.',
+                'Beyond Borders',
+                'https://picsum.photos/seed/global-missions-africa/700/460',
+                6
+            ]
+        ];
+
+        foreach ($seeds as $s) {
+            db_query(
+                "INSERT INTO journey_milestones (year_label, title, description, tag, image_url, sort_order) VALUES (?, ?, ?, ?, ?, ?)",
+                "sssssi",
+                [$s[0], $s[1], $s[2], $s[3], $s[4], $s[5]]
+            );
+        }
+    }
+}
+
+/**
+ * Fetch all journey milestones ordered by sort order
+ */
+function get_journey_milestones() {
+    ensure_journey_table();
+    $rows = db_fetch_all("SELECT * FROM journey_milestones ORDER BY sort_order ASC, id ASC");
+    if (!empty($rows)) {
+        return $rows;
+    }
+    return [
+        ['id' => 1, 'year_label' => '1995', 'title' => 'Founded in January', 'description' => 'Founded by Pastor Morris Omondi and Grace Olweny, Redeemed Gospel Church Eldoret grew through evangelistic crusades and became a beacon of spiritual influence in the region.', 'tag' => 'Our Beginning', 'image_url' => 'https://picsum.photos/seed/church-beginning-1995/700/460', 'sort_order' => 1],
+        ['id' => 2, 'year_label' => 'Ministry', 'title' => 'Our Ministry', 'description' => 'We have planted churches across various locations and authored books on spiritual growth. Our upcoming book, "Kingdom Living," aims to inspire and equip believers.', 'tag' => 'Church Planting', 'image_url' => 'https://picsum.photos/seed/pastoral-ministry-eldoret/700/460', 'sort_order' => 2],
+        ['id' => 3, 'year_label' => '2000', 'title' => 'Leadership Journey', 'description' => 'Pastor Morris Omondi was ordained as a pastor in 2000, an overseer in 2002, and a bishop in 2012. He now oversees Western Region churches.', 'tag' => 'Leadership', 'image_url' => 'https://picsum.photos/seed/ordination-bishop-omondi/700/460', 'sort_order' => 3],
+        ['id' => 4, 'year_label' => 'Family', 'title' => 'Our Family', 'description' => 'Bishop Morris and Rev. Grace Omondi have three children - Joan, Eunice, and Pastor Timothy Omondi - who are devoted to the Lord and active in ministry.', 'tag' => 'Faith at Home', 'image_url' => 'https://picsum.photos/seed/family-faith-eldoret/700/460', 'sort_order' => 4],
+        ['id' => 5, 'year_label' => 'Today', 'title' => 'Our Present', 'description' => 'Our sanctuary, built for Christ\'s glory, continues to grow as we pray for more souls to join God\'s kingdom. The church has a capacity of 1,200 members.', 'tag' => 'Growing Together', 'image_url' => 'https://picsum.photos/seed/redeemed-sanctuary-eldoret/700/460', 'sort_order' => 5],
+        ['id' => 6, 'year_label' => 'Global', 'title' => 'Global Impact', 'description' => 'Bishop Omondi, a prolific author and sought-after preacher, has shared the Gospel across Africa, Europe, and North America, offering wisdom and encouragement.', 'tag' => 'Beyond Borders', 'image_url' => 'https://picsum.photos/seed/global-missions-africa/700/460', 'sort_order' => 6],
+    ];
 }
 
 function ensure_project_images_table() {
@@ -410,14 +519,56 @@ function like_sermon_comment($commentId) {
 }
 
 /**
+ * Ensure ministries table exists
+ */
+function ensure_ministries_table() {
+    static $done = false;
+    if ($done) return;
+    $done = true;
+
+    $sql = "CREATE TABLE IF NOT EXISTS `ministries` (
+        `id` INT AUTO_INCREMENT PRIMARY KEY,
+        `name` VARCHAR(150) NOT NULL,
+        `age_span` VARCHAR(100) NOT NULL DEFAULT '',
+        `description` TEXT NOT NULL,
+        `stats` VARCHAR(255) DEFAULT '',
+        `image_url` VARCHAR(500) NOT NULL DEFAULT '',
+        `sort_order` INT NOT NULL DEFAULT 0,
+        `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci";
+    @db_query($sql);
+}
+
+/**
  * Handles image file uploads with validation, resizing/renaming, and returns relative URL
  *
  * @param array $file_array Pass $_FILES['field_name']
- * @param string $subfolder Subfolder inside uploads/ (e.g. 'gallery', 'projects', 'profile')
- * @return string|false Returns relative path like 'uploads/gallery/photo_xyz.jpg' or false on failure
+ * @param string $subfolder Subfolder inside uploads/ (e.g. 'gallery', 'projects', 'profile', 'ministries', 'journey')
+ * @param string|null &$errorMsg Populated with failure description on error
+ * @return string|false Returns relative path like 'uploads/ministries/photo_xyz.jpg' or false on failure
  */
-function upload_image($file_array, $subfolder = '') {
-    if (!isset($file_array) || !is_array($file_array) || $file_array['error'] !== UPLOAD_ERR_OK) {
+function upload_image($file_array, $subfolder = '', &$errorMsg = null) {
+    if (!isset($file_array) || !is_array($file_array)) {
+        $errorMsg = "No file data received.";
+        return false;
+    }
+
+    $errCode = $file_array['error'] ?? UPLOAD_ERR_NO_FILE;
+    if ($errCode !== UPLOAD_ERR_OK) {
+        switch ($errCode) {
+            case UPLOAD_ERR_INI_SIZE:
+            case UPLOAD_ERR_FORM_SIZE:
+                $errorMsg = "File size exceeds server upload limit (max 15 MB).";
+                break;
+            case UPLOAD_ERR_PARTIAL:
+                $errorMsg = "File upload was interrupted. Please retry.";
+                break;
+            case UPLOAD_ERR_NO_FILE:
+                $errorMsg = "No file was selected.";
+                break;
+            default:
+                $errorMsg = "Upload error (Code #{$errCode}).";
+        }
         return false;
     }
 
@@ -425,32 +576,58 @@ function upload_image($file_array, $subfolder = '') {
     $fileSize = $file_array['size'];
     $origName = $file_array['name'];
 
-    // Max 5MB file size
-    if ($fileSize > 5 * 1024 * 1024) {
+    // Max 15MB file size
+    if ($fileSize > 15 * 1024 * 1024) {
+        $errorMsg = "File is too large (" . round($fileSize / (1024 * 1024), 1) . " MB). Maximum allowed size is 15 MB.";
         return false;
     }
 
     // Allowed extensions & mime types
     $allowed = [
-        'jpg' => 'image/jpeg',
-        'jpeg' => 'image/jpeg',
-        'png' => 'image/png',
-        'webp' => 'image/webp',
-        'gif' => 'image/gif'
+        'jpg'  => ['image/jpeg', 'image/pjpeg'],
+        'jpeg' => ['image/jpeg', 'image/pjpeg'],
+        'jfif' => ['image/jpeg'],
+        'png'  => ['image/png', 'image/x-png'],
+        'webp' => ['image/webp'],
+        'gif'  => ['image/gif'],
+        'avif' => ['image/avif', 'image/heif']
     ];
 
     $ext = strtolower(pathinfo($origName, PATHINFO_EXTENSION));
     if (!array_key_exists($ext, $allowed)) {
+        $errorMsg = "Unsupported file format (." . htmlspecialchars($ext) . "). Please upload JPG, PNG, WebP, GIF, or AVIF.";
         return false;
     }
 
-    // Validate MIME type
-    $finfo = finfo_open(FILEINFO_MIME_TYPE);
-    $mime = finfo_file($finfo, $tmpName);
-    finfo_close($finfo);
+    // Validate MIME type safely
+    if (function_exists('finfo_open')) {
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        if ($finfo) {
+            $mime = finfo_file($finfo, $tmpName);
+            finfo_close($finfo);
 
-    if (!in_array($mime, $allowed, true)) {
-        return false;
+            // Allow if in allowed list or if getimagesize confirms valid image
+            $validMime = false;
+            foreach ($allowed[$ext] as $expectedMime) {
+                if (strcasecmp((string)$mime, $expectedMime) === 0) {
+                    $validMime = true;
+                    break;
+                }
+            }
+            if (!$validMime && $mime !== 'application/octet-stream') {
+                $imgInfo = @getimagesize($tmpName);
+                if (!$imgInfo) {
+                    $errorMsg = "Invalid image content detected ({$mime}).";
+                    return false;
+                }
+            }
+        }
+    } else {
+        $imgInfo = @getimagesize($tmpName);
+        if (!$imgInfo) {
+            $errorMsg = "Uploaded file does not appear to be a valid image.";
+            return false;
+        }
     }
 
     // Destination Directory
@@ -471,14 +648,24 @@ function upload_image($file_array, $subfolder = '') {
         $relPath .= $cleanSub . '/';
     }
 
+    if (!is_writable($targetDir)) {
+        @chmod($targetDir, 0755);
+        if (!is_writable($targetDir)) {
+            $errorMsg = "Server directory is not writable: " . htmlspecialchars($relPath);
+            return false;
+        }
+    }
+
     // Unique filename
     $uniqueName = bin2hex(random_bytes(8)) . '_' . time() . '.' . $ext;
     $destFile = $targetDir . '/' . $uniqueName;
 
     if (move_uploaded_file($tmpName, $destFile)) {
+        @chmod($destFile, 0644);
         return $relPath . $uniqueName;
     }
 
+    $errorMsg = "Failed to write file to disk. Please check server folder permissions.";
     return false;
 }
 

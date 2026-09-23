@@ -34,12 +34,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $statusFilter = sanitize_input($_GET['status'] ?? 'all');
 $where = ($statusFilter !== 'all') ? "WHERE status = '$statusFilter'" : "";
 $invitations = db_fetch_all("SELECT * FROM invitations $where ORDER BY id DESC");
+$pastorName = get_setting('pastor_name', '');
 ?>
 
 <div class="phead">
   <div>
     <h2>Invitation <span class="ser">Inbox</span></h2>
-    <p>Official requests for Rev. Langat to minister at crusades, conferences, and revival services</p>
+    <p>Official requests for <?= !empty($pastorName) ? esc($pastorName) : 'the Pastor' ?> to minister at crusades, conferences, and revival services</p>
   </div>
 </div>
 

@@ -8,10 +8,10 @@ require_once __DIR__ . '/config/config.php';
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/functions.php';
 
-$pastorName = get_setting('pastor_name', 'Bishop Morris Omondi');
-$phone = get_setting('phone', '+254 712 000 000');
-$email = get_setting('email', 'office@revlangat.or.ke');
-$address = get_setting('address', 'Redeemed Gospel Church Eldoret');
+$pastorName = get_setting('pastor_name', '');
+$phone = get_setting('phone', '');
+$email = get_setting('email', '');
+$address = get_setting('address', '');
 $member = user_auth_data();
 
 require_once __DIR__ . '/includes/header.php';
@@ -19,9 +19,9 @@ require_once __DIR__ . '/includes/header.php';
 
 <div class="wrap" style="padding-top:100px;padding-bottom:80px;">
   <div class="shead">
-    <p class="idx">Kingdom Ministry Ministry</p>
+    <p class="idx">Kingdom Ministry</p>
     <h1 style="font-size:clamp(2.4rem, 5.5vw, 4rem);">Invite <span class="ser">the Pastor to Minister</span></h1>
-    <p style="margin-top:10px;color:var(--ink2);max-width:650px;">Rev. Langat is available to minister at open-air crusades, conferences, revival weeks, youth camps, weddings and ordinations across Kenya and beyond.</p>
+    <p style="margin-top:10px;color:var(--ink2);max-width:650px;"><?= !empty($pastorName) ? esc($pastorName) : 'The Pastor' ?> is available to minister at open-air crusades, conferences, revival weeks, youth camps, weddings and ordinations across Kenya and beyond.</p>
   </div>
 
   <div class="agrid">
@@ -34,11 +34,19 @@ require_once __DIR__ . '/includes/header.php';
         <li>Bookings confirmed at least 3 weeks in advance by the secretariat</li>
       </ul>
 
-      <div style="background:var(--paper2);padding:18px;border-radius:6px;font-family:var(--mono);font-size:11px;line-height:1.9;margin-top:20px;">
-        <b>Office Phone / WhatsApp:</b> <?= esc($phone) ?><br>
-        <b>Email:</b> <?= esc($email) ?><br>
-        <b>Church Sanctuary:</b> <?= esc($address) ?>
-      </div>
+      <?php if (!empty($phone) || !empty($email) || !empty($address)): ?>
+        <div style="background:var(--paper2);padding:18px;border-radius:6px;font-family:var(--mono);font-size:11px;line-height:1.9;margin-top:20px;">
+          <?php if (!empty($phone)): ?>
+            <b>Office Phone / WhatsApp:</b> <?= esc($phone) ?><br>
+          <?php endif; ?>
+          <?php if (!empty($email)): ?>
+            <b>Email:</b> <?= esc($email) ?><br>
+          <?php endif; ?>
+          <?php if (!empty($address)): ?>
+            <b>Church Sanctuary:</b> <?= esc($address) ?>
+          <?php endif; ?>
+        </div>
+      <?php endif; ?>
     </div>
 
     <div>

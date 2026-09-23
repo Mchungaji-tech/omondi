@@ -1014,4 +1014,117 @@
       });
     });
   })();
+
+  /* ============ JOURNEY SLIDER & SCROLL SYNC ============ */
+  (function initJourneySlider() {
+    const slider = document.getElementById("journeySlider");
+    if (!slider) return;
+
+    const slides = Array.from(slider.querySelectorAll(".jslide"));
+    const dots = Array.from(slider.querySelectorAll(".jdot"));
+    const counter = document.getElementById("jcurrent");
+    const prevBtn = document.getElementById("jprev");
+    const nextBtn = document.getElementById("jnext");
+    const timelineItems = Array.from(document.querySelectorAll("#journeyTimeline .titem"));
+
+    if (!slides.length) return;
+
+    let currentIndex = 0;
+    let isUserManualInteraction = false;
+    let manualTimeout = null;
+
+    function goToSlide(index, scrollTimeline = false) {
+      if (index < 0) index = slides.length - 1;
+      if (index >= slides.length) index = 0;
+
+      currentIndex = index;
+
+      slides.forEach((s, idx) => {
+        if (idx === index) {
+          s.classList.add("active");
+        } else {
+          s.classList.remove("active");
+        }
+      });
+
+      dots.forEach((d, idx) => {
+        if (idx === index) {
+          d.classList.add("active");
+        } else {
+          d.classList.remove("active");
+        }
+      });
+
+      if (counter) {
+        counter.textContent = String(index + 1);
+      }
+
+      timelineItems.forEach((item, idx) => {
+        if (idx === index) {
+          item.classList.add("active-stage");
+        } else {
+          item.classList.remove("active-stage");
+        }
+      });
+
+      if (scrollTimeline && timelineItems[index]) {
+        isUserManualInteraction = true;
+        clearTimeout(manualTimeout);
+        timelineItems[index].scrollIntoView({ behavior: "smooth", block: "center" });
+        manualTimeout = setTimeout(() => {
+          isUserManualInteraction = false;
+        }, 800);
+      }
+    }
+
+    if (prevBtn) {
+      prevBtn.addEventListener("click", () => {
+        goToSlide(currentIndex - 1, true);
+      });
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener("click", () => {
+        goToSlide(currentIndex + 1, true);
+      });
+    }
+
+    dots.forEach((dot) => {
+      dot.addEventListener("click", () => {
+        const target = Number(dot.dataset.target || 0);
+        goToSlide(target, true);
+      });
+    });
+
+    timelineItems.forEach((item, idx) => {
+      item.style.cursor = "pointer";
+      item.addEventListener("click", () => {
+        goToSlide(idx, false);
+      });
+    });
+
+    // Scroll spy: update photo slider as user scrolls past timeline stages
+    if ("IntersectionObserver" in window && timelineItems.length > 0) {
+      const observerOptions = {
+        root: null,
+        rootMargin: "-20% 0px -40% 0px",
+        threshold: 0.15,
+      };
+
+      const stageObserver = new IntersectionObserver((entries) => {
+        if (isUserManualInteraction) return;
+
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const stageIdx = Number(entry.target.dataset.stageIndex ?? -1);
+            if (stageIdx >= 0 && stageIdx !== currentIndex) {
+              goToSlide(stageIdx, false);
+            }
+          }
+        });
+      }, observerOptions);
+
+      timelineItems.forEach((item) => stageObserver.observe(item));
+    }
+  })();
 })();

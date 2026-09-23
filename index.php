@@ -15,6 +15,8 @@ $tagline = get_setting('tagline', 'Preacher of the Gospel · 23 Years in the Vin
 $heroVerse = get_setting('hero_verse', '“Your word is a lamp to my feet and a light to my path.” — Psalm 119:105');
 $portraitUrl = get_setting('portrait_url', 'https://picsum.photos/seed/eldoret-pastor-portrait/900/1125');
 $bio1 = get_setting('bio1');
+$bio2 = get_setting('bio2');
+$journeyStages = get_journey_milestones();
 
 // Split pastor name into 2 lines for the big hero poster (last word = line 2, rest = line 1)
 $_nameParts = preg_split('/\s+/', trim($pastorName));
@@ -39,6 +41,7 @@ $streamFacebook = (string)get_setting('stream_facebook_url', '');
 $liveTitle = (string)get_setting('live_title', 'Sunday Main Service — Live from Eldoret');
 $mpesaPaybill = get_setting('mpesa_paybill', '453 210');
 
+ensure_ministries_table();
 $ministries = db_fetch_all("SELECT * FROM ministries ORDER BY sort_order ASC, id ASC LIMIT 3");
 $fundGoals = db_fetch_all("SELECT * FROM fund_goals ORDER BY sort_order ASC, id ASC LIMIT 3");
 $events = db_fetch_all("SELECT * FROM events WHERE is_active = 1 ORDER BY sort_order ASC, id ASC LIMIT 3");
@@ -94,11 +97,12 @@ require_once __DIR__ . '/includes/header.php';
   <div class="mband">
     <div class="mcard mabout">
       <span class="mc-lab">The Shepherd</span>
-      <img class="pola hide-mobile" src="https://picsum.photos/seed/pastor-with-bible/300/340" alt="Rev. Langat with his Bible">
-      <p><?= nl2br(esc($bio1)) ?></p>
+      <p style="font-size:1.06rem;line-height:1.75;margin-top:12px;"><?= nl2br(esc($bio1)) ?></p>
+      <?php if (!empty($bio2)): ?>
+        <p style="font-size:0.98rem;line-height:1.7;color:var(--ink2);margin-top:12px;"><?= nl2br(esc($bio2)) ?></p>
+      <?php endif; ?>
       <div class="sig">— <?= esc($pastorName) ?></div>
-      <p class="mcap"><b>Tip:</b> swap the large frame above for the pastor's official photo (4:5 ratio works best).</p>
-      <div style="margin-top:14px;">
+      <div style="margin-top:20px;">
         <a href="#journey" class="btn sm ghost">Read the full Journey &rarr;</a>
       </div>
     </div>
@@ -138,16 +142,47 @@ require_once __DIR__ . '/includes/header.php';
     <div class="jleft">
       <p class="idx">(01) — The Journey</p>
       <h2 class="big reveal">A Legacy of<br><span class="ser">Faith</span></h2>
-      <p style="margin-top:22px;max-width:380px;color:var(--ink2);">Founded in January 1995, Redeemed Gospel Church Eldoret continues to redeem, restore, and renew lives through the power of the Gospel.</p>
-      <div class="jphoto kb reveal"><img src="https://picsum.photos/seed/redeemed-gospel-church/660/440" alt="Redeemed Gospel Church Eldoret"></div>
+      <p style="margin-top:18px;max-width:380px;color:var(--ink2);">Founded in January 1995, Redeemed Gospel Church Eldoret continues to redeem, restore, and renew lives through the power of the Gospel.</p>
+
+      <!-- JOURNEY STAGE PHOTO SLIDER -->
+      <div class="jslider-frame reveal" id="journeySlider" aria-roledescription="carousel" aria-label="Journey Milestones">
+        <div class="jslider-viewport">
+          <?php foreach ($journeyStages as $idx => $stg): ?>
+            <div class="jslide <?= $idx === 0 ? 'active' : '' ?>" data-index="<?= $idx ?>">
+              <img src="<?= esc(img_src($stg['image_url'])) ?>" alt="<?= esc($stg['title']) ?>" loading="lazy">
+              <div class="jslide-meta">
+                <span class="jslide-year"><?= esc($stg['year_label']) ?></span>
+                <span class="jslide-title"><?= esc($stg['title']) ?></span>
+              </div>
+            </div>
+          <?php endforeach; ?>
+        </div>
+
+        <div class="jslider-controls">
+          <div class="jslider-nav">
+            <button type="button" class="jslider-btn prev" id="jprev" aria-label="Previous stage">&larr;</button>
+            <span class="jslider-counter"><b id="jcurrent">1</b> / <?= count($journeyStages) ?></span>
+            <button type="button" class="jslider-btn next" id="jnext" aria-label="Next stage">&rarr;</button>
+          </div>
+          <div class="jslider-dots" id="jdots">
+            <?php foreach ($journeyStages as $idx => $stg): ?>
+              <button type="button" class="jdot <?= $idx === 0 ? 'active' : '' ?>" data-target="<?= $idx ?>" aria-label="Go to stage <?= $idx + 1 ?>: <?= esc($stg['title']) ?>"></button>
+            <?php endforeach; ?>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="tline">
-      <div class="titem reveal"><div class="yr">1995</div><h3>Founded in January</h3><p>Founded by Pastor Morris Omondi and Grace Olweny, Redeemed Gospel Church Eldoret grew through evangelistic crusades and became a beacon of spiritual influence in the region.</p><span class="tag">Our Beginning</span></div>
-      <div class="titem reveal"><div class="yr">Ministry</div><h3>Our Ministry</h3><p>We have planted churches across various locations and authored books on spiritual growth. Our upcoming book, "Kingdom Living," aims to inspire and equip believers.</p><span class="tag">Church Planting</span></div>
-      <div class="titem reveal"><div class="yr">2000</div><h3>Leadership Journey</h3><p>Pastor Morris Omondi was ordained as a pastor in 2000, an overseer in 2002, and a bishop in 2012. He now oversees Western Region churches.</p><span class="tag">Leadership</span></div>
-      <div class="titem reveal"><div class="yr">Family</div><h3>Our Family</h3><p>Bishop Morris and Rev. Grace Omondi have three children - Joan, Eunice, and Pastor Timothy Omondi - who are devoted to the Lord and active in ministry.</p><span class="tag">Faith at Home</span></div>
-      <div class="titem reveal"><div class="yr">Today</div><h3>Our Present</h3><p>Our sanctuary, built for Christ's glory, continues to grow as we pray for more souls to join God's kingdom. The church has a capacity of 1,200 members.</p><span class="tag">Growing Together</span></div>
-      <div class="titem reveal"><div class="yr">Global</div><h3>Global Impact</h3><p>Bishop Omondi, a prolific author and sought-after preacher, has shared the Gospel across Africa, Europe, and North America, offering wisdom and encouragement.</p><span class="tag">Beyond Borders</span></div>
+    <div class="tline" id="journeyTimeline">
+      <?php foreach ($journeyStages as $idx => $stg): ?>
+        <div class="titem reveal <?= $idx === 0 ? 'active-stage' : '' ?>" data-stage-index="<?= $idx ?>" id="stage-item-<?= $idx ?>">
+          <div class="yr"><?= esc($stg['year_label']) ?></div>
+          <h3><?= esc($stg['title']) ?></h3>
+          <p><?= esc($stg['description']) ?></p>
+          <?php if (!empty($stg['tag'])): ?>
+            <span class="tag"><?= esc($stg['tag']) ?></span>
+          <?php endif; ?>
+        </div>
+      <?php endforeach; ?>
     </div>
   </div>
 </section>
@@ -322,7 +357,7 @@ require_once __DIR__ . '/includes/header.php';
       <!-- PRAYER CARD -->
       <div class="card" style="border-top:4px solid var(--wine);">
         <h3 style="font-size:1.6rem;margin-bottom:10px;">Need Prayer?</h3>
-        <p style="color:var(--ink2);margin-bottom:20px;font-size:1rem;">Send your confidential request to Rev. Langat and the intercession team for Tuesday prayer mountain.</p>
+        <p style="color:var(--ink2);margin-bottom:20px;font-size:1rem;">Send your confidential request to <?= esc($pastorName) ?> and the intercession team for Tuesday prayer mountain.</p>
         <a href="<?= BASE_URL ?>prayer.php" class="btn" style="width:100%;">Submit Prayer Request &rarr;</a>
       </div>
 

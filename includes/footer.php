@@ -6,11 +6,11 @@
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../config/functions.php';
 
-$pastorName = get_setting('pastor_name', 'Bishop Morris Omondi');
-$phone = get_setting('phone', '+254 712 000 000');
-$email = get_setting('email', 'office@revlangat.or.ke');
-$address = get_setting('address', 'Redeemed Gospel Church Eldoret');
-$paybill = get_setting('mpesa_paybill', '453 210');
+$pastorName = get_setting('pastor_name', '');
+$phone = get_setting('phone', '');
+$email = get_setting('email', '');
+$address = get_setting('address', '');
+$paybill = get_setting('mpesa_paybill', '');
 $sun1 = get_setting('sun1', '6:30 AM — Dawn Service');
 $sun2 = get_setting('sun2', '9:00 AM — Main Service · Live');
 $sun3 = get_setting('sun3', '2:00 PM — New Believers\' Class');
@@ -22,7 +22,7 @@ $sun3 = get_setting('sun3', '2:00 PM — New Believers\' Class');
       <p style="margin-top:16px;max-width:320px;font-size:1rem">“I have fought the good fight, I have finished the race, I have kept the faith.” — 2 Timothy 4:7</p>
     </div>
     <div>
-      <h4>Explore Beacon</h4>
+      <h4>Explore</h4>
       <ul>
         <li><a href="<?= BASE_URL ?>about.php">Pastor's Journey</a></li>
         <li><a href="<?= BASE_URL ?>sermons.php">Sermons Library</a></li>
@@ -42,28 +42,30 @@ $sun3 = get_setting('sun3', '2:00 PM — New Believers\' Class');
         <li>Sun · <?= esc($sun3) ?></li>
         <li>Wed · Bible Study 6:00 PM</li>
         <li>Fri · Youth Night 7:00 PM</li>
-        <li><?= esc($address) ?></li>
+        <?php if (!empty($address)): ?>
+          <li><?= esc($address) ?></li>
+        <?php endif; ?>
       </ul>
     </div>
     <div>
       <h4>Contact &amp; Giving</h4>
       <ul>
-        <li><?= esc($phone) ?></li>
-        <li><?= esc($email) ?></li>
-        <li>M-Pesa Paybill <b><?= esc($paybill) ?></b></li>
-        <?php
-          $_last = trim($pastorName);
-          $_last = preg_split('/\s+/', $_last);
-          $_last = end($_last);
-        ?>
-        <li><a href="<?= BASE_URL ?>live.php">YouTube — Rev. <?= esc($_last) ?> TV</a></li>
-        <li><a href="<?= BASE_URL ?>live.php">Facebook — Beacon Gospel</a></li>
+        <?php if (!empty($phone)): ?>
+          <li><?= esc($phone) ?></li>
+        <?php endif; ?>
+        <?php if (!empty($email)): ?>
+          <li><?= esc($email) ?></li>
+        <?php endif; ?>
+        <?php if (!empty($paybill)): ?>
+          <li>M-Pesa Paybill <b><?= esc($paybill) ?></b></li>
+        <?php endif; ?>
+        <li><a href="<?= BASE_URL ?>live.php">Watch Live Services</a></li>
         <li><a href="<?= BASE_URL ?>invite.php" style="color:var(--gold2);">✉ Invite Pastor to Minister</a></li>
       </ul>
     </div>
   </div>
   <div class="fbottom">
-    <span>© <?= date('Y') ?> <?= esc(strtoupper($pastorName)) ?> · REDEEMED GOSPEL CHURCH ELDORET</span>
+    <span>© <?= date('Y') ?> <?= !empty($pastorName) ? esc(strtoupper($pastorName)) . ' · ' : '' ?>REDEEMED GOSPEL CHURCH ELDORET</span>
     <span>SOLI DEO GLORIA ✦ ELDORET, KENYA</span>
   </div>
 </footer>

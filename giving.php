@@ -16,6 +16,9 @@ $bankName = get_setting('bank_name', 'Equity Bank · Eldoret Branch');
 $bankAccount = get_setting('bank_account', '04501234567890');
 $bankAccountName = get_setting('bank_account_name', 'Redeemed Gospel Church Eldoret');
 $swiftCode = get_setting('swift_code', 'EQBLKENA');
+$bankCode = get_setting('bank_code', '68');
+$branchCode = get_setting('branch_code', '045');
+$bankAddress = get_setting('bank_address', 'Uganda Road, Eldoret Branch, Kenya');
 
 require_once __DIR__ . '/includes/header.php';
 ?>
@@ -65,7 +68,18 @@ require_once __DIR__ . '/includes/header.php';
         <div class="wrow"><span>Bank</span><b><?= esc($bankName) ?></b></div>
         <div class="wrow"><span>Account Name</span><b><?= esc($bankAccountName) ?></b></div>
         <div class="wrow"><span>Account No.</span><b><?= esc($bankAccount) ?></b><button class="copy" data-copy="<?= esc($bankAccount) ?>">Copy</button></div>
-        <div class="wrow"><span>SWIFT</span><b><?= esc($swiftCode) ?></b><button class="copy" data-copy="<?= esc($swiftCode) ?>">Copy</button></div>
+        <?php if (!empty($bankCode)): ?>
+          <div class="wrow"><span>Bank Code</span><b><?= esc($bankCode) ?></b><button class="copy" data-copy="<?= esc($bankCode) ?>">Copy</button></div>
+        <?php endif; ?>
+        <?php if (!empty($branchCode)): ?>
+          <div class="wrow"><span>Branch Code</span><b><?= esc($branchCode) ?></b><button class="copy" data-copy="<?= esc($branchCode) ?>">Copy</button></div>
+        <?php endif; ?>
+        <?php if (!empty($swiftCode)): ?>
+          <div class="wrow"><span>SWIFT / BIC</span><b><?= esc($swiftCode) ?></b><button class="copy" data-copy="<?= esc($swiftCode) ?>">Copy</button></div>
+        <?php endif; ?>
+        <?php if (!empty($bankAddress)): ?>
+          <div class="wrow"><span>Bank Address</span><b><?= esc($bankAddress) ?></b></div>
+        <?php endif; ?>
       </div>
     </div>
   </div>

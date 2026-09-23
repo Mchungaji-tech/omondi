@@ -8,6 +8,7 @@ require_once __DIR__ . '/config/config.php';
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/functions.php';
 
+ensure_ministries_table();
 $ministries = db_fetch_all("SELECT * FROM ministries ORDER BY sort_order ASC, id ASC");
 
 require_once __DIR__ . '/includes/header.php';

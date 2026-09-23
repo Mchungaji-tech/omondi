@@ -8,8 +8,8 @@ require_once __DIR__ . '/config/config.php';
 require_once __DIR__ . '/config/db.php';
 require_once __DIR__ . '/config/functions.php';
 
-$phone = get_setting('phone', '+254 712 000 000');
-$pastorName = get_setting('pastor_name', 'Bishop Morris Omondi');
+$phone = get_setting('phone', '');
+$pastorName = get_setting('pastor_name', '');
 $member = user_auth_data();
 
 require_once __DIR__ . '/includes/header.php';
@@ -26,11 +26,13 @@ require_once __DIR__ . '/includes/header.php';
     <div class="prnote">
       <p class="verse">You are not carrying this burden alone.</p>
       <p style="font-size:1.05rem;line-height:1.75;color:var(--ink2);margin-bottom:16px;">
-        Send your prayer request below. It is read only by <?= esc($pastorName) ?> and the consecrated intercession team, held in strict confidence, and lifted every Tuesday on Kaptagat Prayer Mountain.
+        Send your prayer request below. It is read only by <?= !empty($pastorName) ? esc($pastorName) : 'the Pastor' ?> and the consecrated intercession team, held in strict confidence, and lifted every Tuesday on Kaptagat Prayer Mountain.
       </p>
-      <p style="font-size:1.05rem;line-height:1.75;color:var(--ink2);margin-bottom:20px;">
-        For urgent pastoral care or hospital visitation at MTRH Eldoret, call the office directly: <b style="color:var(--wine)"><?= esc($phone) ?></b>.
-      </p>
+      <?php if (!empty($phone)): ?>
+        <p style="font-size:1.05rem;line-height:1.75;color:var(--ink2);margin-bottom:20px;">
+          For urgent pastoral care or hospital visitation at MTRH Eldoret, call the office directly: <b style="color:var(--wine)"><?= esc($phone) ?></b>.
+        </p>
+      <?php endif; ?>
       
       <div class="prstats" style="grid-template-columns:repeat(3,1fr);display:grid;gap:16px;border-top:1px solid var(--line);padding-top:20px;">
         <div><b>1,240+</b><small>Prayers Answered</small></div>

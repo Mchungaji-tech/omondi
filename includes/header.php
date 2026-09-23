@@ -6,8 +6,8 @@
 require_once __DIR__ . '/../config/config.php';
 require_once __DIR__ . '/../config/functions.php';
 
-$pastorName = get_setting('pastor_name', 'Bishop Morris Omondi');
-$pastorEpithet = get_setting('pastor_epithet', 'of Eldoret');
+$pastorName = get_setting('pastor_name', '');
+$pastorEpithet = get_setting('pastor_epithet', '');
 
 $member = user_auth_data();
 $currentPage = basename($_SERVER['PHP_SELF'], '.php');
@@ -17,8 +17,8 @@ $currentPage = basename($_SERVER['PHP_SELF'], '.php');
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title><?= esc($pastorName) ?> — Redeemed Gospel Church Eldoret</title>
-<meta name="description" content="<?= esc($pastorName) ?>, evangelical pastor in Eldoret, Kenya. Sermons, live streams, ministries, community support, prayer requests and preaching invitations.">
+<title><?= !empty($pastorName) ? esc($pastorName) . ' — ' : '' ?>Redeemed Gospel Church Eldoret</title>
+<meta name="description" content="<?= !empty($pastorName) ? esc($pastorName) : 'Redeemed Gospel Church' ?>, evangelical church and ministry in Eldoret, Kenya. Sermons, live streams, ministries, community support, prayer requests and preaching invitations.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">

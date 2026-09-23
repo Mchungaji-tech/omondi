@@ -6,6 +6,8 @@
 
 require_once __DIR__ . '/includes/admin_header.php';
 
+ensure_ministries_table();
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     csrf_verify();
     $action = $_POST['action'] ?? '';
@@ -18,10 +20,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $img = sanitize_input($_POST['image_url'] ?? '');
         $sortOrder = (int)($_POST['sort_order'] ?? 0);
 
-        if (isset($_FILES['ministry_file']) && $_FILES['ministry_file']['error'] === UPLOAD_ERR_OK) {
-            $uploaded = upload_image($_FILES['ministry_file'], 'ministries');
+        $uploadErr = null;
+        if (isset($_FILES['ministry_file']) && $_FILES['ministry_file']['error'] !== UPLOAD_ERR_NO_FILE) {
+            $uploaded = upload_image($_FILES['ministry_file'], 'ministries', $uploadErr);
             if ($uploaded) {
                 $img = $uploaded;
+            } else {
+                set_flash('error', "Ministry photo upload failed: " . ($uploadErr ?: "Unknown error."));
             }
         }
 
@@ -33,6 +38,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 set_flash('success', "Ministry '$name' added.");
             } else {
                 $id = (int)$_POST['id'];
+                if (empty($img)) {
+                    $existing = db_fetch_one("SELECT image_url FROM ministries WHERE id = ?", "i", [$id]);
+                    if ($existing && !empty($existing['image_url'])) {
+                        $img = $existing['image_url'];
+                    }
+                }
                 $sql = "UPDATE ministries SET name = ?, age_span = ?, description = ?, stats = ?, image_url = ?, sort_order = ? WHERE id = ?";
                 db_query($sql, "sssssii", [$name, $span, $desc, $stats, $img, $sortOrder, $id]);
                 log_audit($adminUser['id'], $adminUser['username'], "Updated ministry: '$name'");
@@ -115,9 +126,15 @@ $ministries = db_fetch_all("SELECT * FROM ministries ORDER BY sort_order ASC, id
       <?= csrf_field() ?>
       <input type="hidden" name="action" value="create">
 
-      <div class="field">
-        <label>Ministry Name *</label>
-        <input type="text" name="name" placeholder="e.g. Youth Ministry" required>
+      <div class="mrow2">
+        <div class="field">
+          <label>Ministry Name *</label>
+          <input type="text" name="name" placeholder="e.g. Youth Ministry" required>
+        </div>
+        <div class="field">
+          <label>Sort Order (Number)</label>
+          <input type="number" name="sort_order" value="<?= count($ministries) + 1 ?>">
+        </div>
       </div>
 
       <div class="field">
@@ -179,9 +196,15 @@ $ministries = db_fetch_all("SELECT * FROM ministries ORDER BY sort_order ASC, id
         <input type="hidden" name="action" value="update">
         <input type="hidden" name="id" value="<?= $editMinistry['id'] ?>">
 
-        <div class="field">
-          <label>Ministry Name *</label>
-          <input type="text" name="name" value="<?= esc($editMinistry['name']) ?>" required>
+        <div class="mrow2">
+          <div class="field">
+            <label>Ministry Name *</label>
+            <input type="text" name="name" value="<?= esc($editMinistry['name']) ?>" required>
+          </div>
+          <div class="field">
+            <label>Sort Order</label>
+            <input type="number" name="sort_order" value="<?= (int)$editMinistry['sort_order'] ?>">
+          </div>
         </div>
 
         <div class="field">

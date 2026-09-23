@@ -54,6 +54,7 @@ $flash = get_flash();
       <a href="sermon_comments.php" class="<?= $currentPage === 'sermon_comments' ? 'on' : '' ?>"><i>08b</i>Sermon Comments</a>
       <a href="live.php" class="<?= $currentPage === 'live' ? 'on' : '' ?>"><i>09</i>Live Broadcast &amp; Chat</a>
       <a href="ministries.php" class="<?= $currentPage === 'ministries' ? 'on' : '' ?>"><i>10</i>Ministries</a>
+      <a href="journey.php" class="<?= $currentPage === 'journey' ? 'on' : '' ?>"><i>10b</i>Journey Milestones</a>
       <a href="schedule.php" class="<?= $currentPage === 'schedule' ? 'on' : '' ?>"><i>11</i>Weekly Rhythm</a>
       <a href="gallery.php" class="<?= $currentPage === 'gallery' ? 'on' : '' ?>"><i>12</i>Photo Gallery</a>
       <a href="testimonies.php" class="<?= $currentPage === 'testimonies' ? 'on' : '' ?>"><i>13</i>Testimonies</a>

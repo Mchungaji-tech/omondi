@@ -139,6 +139,20 @@ CREATE TABLE IF NOT EXISTS `ministries` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------------------
+-- 7b. Journey Milestones Table
+-- --------------------------------------------------------------------
+CREATE TABLE IF NOT EXISTS `journey_milestones` (
+    `id` INT AUTO_INCREMENT PRIMARY KEY,
+    `year_label` VARCHAR(50) NOT NULL,
+    `title` VARCHAR(150) NOT NULL,
+    `description` TEXT NOT NULL,
+    `tag` VARCHAR(100) NOT NULL DEFAULT '',
+    `image_url` VARCHAR(500) NOT NULL DEFAULT '',
+    `sort_order` INT NOT NULL DEFAULT 0,
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------------------
 -- 8. Pastor's Weekly Rhythm Schedule Table
 -- --------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS `weekly_schedule` (
@@ -341,6 +355,9 @@ INSERT INTO `site_settings` (`setting_key`, `setting_value`) VALUES
 ('bank_account', '04501234567890'),
 ('bank_account_name', 'Redeemed Gospel Church Eldoret'),
 ('swift_code', 'EQBLKENA'),
+('bank_code', '68'),
+('branch_code', '045'),
+('bank_address', 'Uganda Road, Eldoret Branch, Kenya'),
 ('stream_is_live', '1'),
 ('stream_viewers', '1243'),
 ('security_mfa', '1'),
@@ -400,6 +417,15 @@ INSERT INTO `ministries` (`name`, `age_span`, `description`, `stats`, `image_url
 ('Children''s Church', 'Ages 3–12', 'Sunday school in three languages, memory-verse clubs and the Huruma feeding programme — hot meals and the Bread of Life.', '✦ 500+ children · 300 meals served weekly', 'https://picsum.photos/seed/children-ministry-kenya/640/400', 3),
 ('Street Rescue Outreach', 'Rescue & Rehab', 'Rescue, rehabilitation and reconciliation for street-connected young people in Langas and Huruma — back to family, school and church.', '✦ 210 youth resettled since 2018 · 3 partner churches', 'https://picsum.photos/seed/street-outreach-eldoret/640/400', 4),
 ('Beacon Leadership School', 'Pastoral Training', 'A two-year evening school equipping bi-vocational pastors and lay leaders across the North Rift — hermeneutics, homiletics and shepherding.', '✦ 60 pastors trained yearly · 14 counties reached', 'https://picsum.photos/seed/bible-college-kenya/640/400', 5);
+
+-- Journey Milestones
+INSERT INTO `journey_milestones` (`year_label`, `title`, `description`, `tag`, `image_url`, `sort_order`) VALUES
+('1995', 'Founded in January', 'Founded by Pastor Morris Omondi and Grace Olweny, Redeemed Gospel Church Eldoret grew through evangelistic crusades and became a beacon of spiritual influence in the region.', 'Our Beginning', 'https://picsum.photos/seed/church-beginning-1995/700/460', 1),
+('Ministry', 'Our Ministry', 'We have planted churches across various locations and authored books on spiritual growth. Our upcoming book, "Kingdom Living," aims to inspire and equip believers.', 'Church Planting', 'https://picsum.photos/seed/pastoral-ministry-eldoret/700/460', 2),
+('2000', 'Leadership Journey', 'Pastor Morris Omondi was ordained as a pastor in 2000, an overseer in 2002, and a bishop in 2012. He now oversees Western Region churches.', 'Leadership', 'https://picsum.photos/seed/ordination-bishop-omondi/700/460', 3),
+('Family', 'Our Family', 'Bishop Morris and Rev. Grace Omondi have three children - Joan, Eunice, and Pastor Timothy Omondi - who are devoted to the Lord and active in ministry.', 'Faith at Home', 'https://picsum.photos/seed/family-faith-eldoret/700/460', 4),
+('Today', 'Our Present', 'Our sanctuary, built for Christ\'s glory, continues to grow as we pray for more souls to join God\'s kingdom. The church has a capacity of 1,200 members.', 'Growing Together', 'https://picsum.photos/seed/redeemed-sanctuary-eldoret/700/460', 5),
+('Global', 'Global Impact', 'Bishop Omondi, a prolific author and sought-after preacher, has shared the Gospel across Africa, Europe, and North America, offering wisdom and encouragement.', 'Beyond Borders', 'https://picsum.photos/seed/global-missions-africa/700/460', 6);
 
 -- Weekly Rhythm Schedule
 INSERT INTO `weekly_schedule` (`day_code`, `title`, `details`, `time_chip`, `is_sunday`, `sort_order`) VALUES
